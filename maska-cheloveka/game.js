@@ -14,6 +14,14 @@ const spriteFrames = {
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-jump-${frame}.png`)
   }
 };
+const spriteImageCache = new Map();
+Object.values(spriteFrames).forEach((actions) => {
+  Object.values(actions).flat().forEach((path) => {
+    const image = new Image();
+    image.src = path;
+    spriteImageCache.set(path, image);
+  });
+});
 
 const css = getComputedStyle(document.documentElement);
 const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * innerHeight / 100;
@@ -139,8 +147,15 @@ function setForm(form) {
 function setHeroSpriteFrame(form, action, frameIndex) {
   const path = spriteFrames[form][action][frameIndex];
   if (heroImage.dataset.frame === path) return;
-  heroImage.style.backgroundImage = `url("${path}")`;
+  const image = spriteImageCache.get(path);
   heroImage.dataset.frame = path;
+  const applyFrame = () => {
+    if (heroImage.dataset.frame === path) {
+      heroImage.style.backgroundImage = `url("${path}")`;
+    }
+  };
+  if (image?.complete && image.naturalWidth > 0) applyFrame();
+  else if (image && typeof image.decode === "function") image.decode().then(applyFrame).catch(() => {});
 }
 
 function updateHeroAnimation(now) {
