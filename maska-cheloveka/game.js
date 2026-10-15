@@ -7,12 +7,21 @@ const speedValue = document.getElementById("speed-value");
 const jumpPreparationMs = 50;
 const spriteFrames = {
   human: {
-    // Три опорные позы: правая нога впереди, ноги под корпусом, левая впереди.
-    run: [1, 3, 4].map((frame) => `assets/characters/frames/human-run-${frame}.png`),
+    // Авторские PNG-кадры бега.
+    run: [
+      "assets/characters/human-1.png",
+      "assets/characters/human-2.png",
+      "assets/characters/human-3.png"
+    ],
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-jump-${frame}.png`)
   },
   bear: {
-    run: [1, 3, 4].map((frame) => `assets/characters/frames/bear-run-${frame}.png`),
+    // Авторские PNG-кадры бега.
+    run: [
+      "assets/characters/bear-1.png",
+      "assets/characters/bear-2.png",
+      "assets/characters/bear-3.png"
+    ],
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-jump-${frame}.png`)
   }
 };
@@ -33,11 +42,6 @@ const obstacleTypes = [
     id: "ravine", src: "assets/obstacles/ravine-bear-jump.png", className: "obstacle--ravine",
     alt: "Овраг: перепрыгнуть можно медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
     rule: "Для оврага нужен прыжок медведем.", mode: "ravine"
-  },
-  {
-    id: "tree", src: "assets/obstacles/fallen-tree-human-pass.png", className: "obstacle--tree",
-    alt: "Поваленное дерево: под ним проходит человек", hint: "ЧЕЛОВЕК — ПРОБЕЖАТЬ ПОД",
-    rule: "Под деревом можно пробежать только человеком.", mode: "ground", form: "human"
   },
   {
     id: "river", src: "assets/obstacles/deep-river-bear-wade-filled.png", className: "obstacle--river",
