@@ -97,7 +97,6 @@
     game.style.transformOrigin = `${focusX}px 72%`;
     game.style.transition = `transform ${zoomDuration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
 
-    /* Бабл появляется одновременно с приближением камеры. */
     showBubble();
 
     requestAnimationFrame(() => {
@@ -136,7 +135,7 @@
   function watchWitch() {
     if (!triggered && !completed && gameStarted && running && !tutorialActive) {
       const center = worldX + heroScreenX();
-      const approachDistance = innerWidth * 0.14;
+      const approachDistance = innerWidth * 0.08;
       if (center >= currentWitchX() - approachDistance) triggerWitchScene();
     }
     requestAnimationFrame(watchWitch);
