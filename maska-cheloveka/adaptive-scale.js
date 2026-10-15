@@ -8,8 +8,9 @@
   const WITCH_BASE_WIDTH = 138;
   const OBSTACLE_VERTICAL_OFFSET = 35;
   const BUSH_VERTICAL_OFFSET = 35;
-  const CROWD_VERTICAL_LIFT = 5;
-  const WITCH_VERTICAL_LIFT = 5;
+  const HERO_VERTICAL_LIFT = 1;
+  const CROWD_VERTICAL_LIFT = 6;
+  const WITCH_VERTICAL_LIFT = 6;
   const STUMP_VERTICAL_LIFT = 25;
   const STUMP_SCALE = 2 / 3;
 
@@ -92,7 +93,7 @@
     /* Герой: те же размеры относительно фона на любой высоте экрана. */
     const form = hero.dataset.form === 'bear' ? 'bear' : 'human';
     hero.style.width = `${HERO_BASE_WIDTH[form] * sceneScale}px`;
-    hero.style.bottom = `calc(var(--run-line-bottom) - ${12 * sceneScale}px)`;
+    hero.style.bottom = `calc(var(--run-line-bottom) - ${(12 - HERO_VERTICAL_LIFT) * sceneScale}px)`;
 
     /* Препятствия: фактическая ширина меняется, поэтому offsetWidth и коллизии
        остаются синхронны с визуальным размером. Пень уменьшен в 1.5 раза. */
@@ -125,7 +126,7 @@
       indicator.style.setProperty('bottom', `${loweredBushBottom}px`, 'important');
     });
 
-    /* Ведьма стоит на линии бега и дополнительно поднята на 5 px. */
+    /* Ведьма стоит на линии бега и дополнительно поднята на 6 px. */
     const witch = document.getElementById('witch-midpoint');
     if (witch) {
       const logicalX = Number(witch.dataset.logicalX);
