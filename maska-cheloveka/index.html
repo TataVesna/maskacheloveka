@@ -25,6 +25,11 @@
       transform: translateX(-50%) scale(0.9) !important;
       transform-origin: 50% 100%;
     }
+
+    /* Ползунок скорости временно скрыт. */
+    #speed-control {
+      display: none !important;
+    }
   </style>
 </head>
 
@@ -73,8 +78,8 @@
     </div>
   </div>
 
-<label id="speed-control" for="speed-slider">Скорость <output id="speed-value">2.5×</output>
-  <input id="speed-slider" type="range" min="0.4" max="2.5" step="0.1" value="2.5">
+<label id="speed-control" for="speed-slider">Скорость <output id="speed-value">1.0×</output>
+  <input id="speed-slider" type="range" min="0.4" max="2.5" step="0.1" value="1">
 </label>
 
 <div id="hero" class="human running" data-form="human">
