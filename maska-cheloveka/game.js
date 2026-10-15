@@ -299,7 +299,7 @@ function startJump() {
     takeoffAt: performance.now() + jumpPreparationMs,
     form,
     duration: (form === "bear" ? 1.12 : 0.55) / Number(speedSlider.value),
-    height: innerHeight * (form === "bear" ? 0.38 : 0.16)
+    height: innerHeight * (form === "bear" ? 0.24 : 0.16)
   };
   hero.classList.remove("running");
   hero.classList.add("jumping");
