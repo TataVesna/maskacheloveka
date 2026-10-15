@@ -31,6 +31,7 @@
 
     const indicator = document.createElement("img");
     indicator.className = `form-indicator-bush form-indicator-bush--${indicatorForm}`;
+    indicator.dataset.caveIndicator = "true";
     indicator.src = indicatorBushes[indicatorForm];
     indicator.alt = indicatorForm === "bear"
       ? "Красный куст: дальше нужен медведь"
