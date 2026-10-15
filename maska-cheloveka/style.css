@@ -207,6 +207,12 @@ body {
   z-index: 4;
 }
 
+.form-indicator-bush {
+  width: auto !important;
+  max-width: none;
+  height: auto;
+}
+
 /* Толпа развёрнута в противоположную сторону без изменения логики коллизии. */
 .obstacle--crowd {
   transform: translate(-50%, -50%) scaleX(-1) !important;
