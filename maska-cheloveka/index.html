@@ -16,8 +16,14 @@
     #world .obstacle,
     #world .form-indicator-bush {
       top: auto !important;
-      bottom: 15px !important;
+      bottom: 20px !important;
       transform: translateX(-50%) !important;
+    }
+
+    /* Толпа немного уменьшена, нижняя точка остаётся на общей линии. */
+    #world .obstacle--crowd {
+      transform: translateX(-50%) scale(0.9) !important;
+      transform-origin: 50% 100%;
     }
   </style>
 </head>
