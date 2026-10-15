@@ -119,6 +119,59 @@ const obstacleTypes = [
   }
 ];
 
+/* Эти три препятствия размещаются только в локации кургана/пещеры. */
+const caveObstaclePlan = [
+  {
+    type: {
+      id: "cave-low-passage",
+      src: "assets/obstacles/cave-low-passage-human.png",
+      className: "obstacle--cave-low-passage",
+      alt: "Низкий проход: пройти может только человек",
+      hint: "ЧЕЛОВЕК — НИЗКИЙ ПРОХОД",
+      rule: "Низкий проход доступен только человеку.",
+      mode: "ground",
+      form: "human",
+      indicatorForm: null,
+      zIndex: "4",
+      hintTop: "43vh"
+    },
+    segment: 3,
+    fraction: 0.46
+  },
+  {
+    type: {
+      id: "cave-wall",
+      src: "assets/obstacles/cave-wall-bear-break.png",
+      className: "obstacle--cave-wall",
+      alt: "Каменная стена: её ломает медведь",
+      hint: "МЕДВЕДЬ — СЛОМАТЬ СТЕНУ",
+      rule: "Стену может сломать только медведь.",
+      mode: "cave-wall",
+      indicatorForm: null,
+      zIndex: "4",
+      hintTop: "40vh"
+    },
+    segment: 4,
+    fraction: 0.5
+  },
+  {
+    type: {
+      id: "cave-high-passage",
+      src: "assets/obstacles/cave-high-passage-all.png",
+      className: "obstacle--cave-high-passage",
+      alt: "Высокий проход: проходят оба облика",
+      hint: "ПРОХОД ДЛЯ ВСЕХ",
+      rule: "Высокий проход доступен обоим обликам.",
+      mode: "all-pass",
+      indicatorForm: null,
+      zIndex: "4",
+      hintTop: "40vh"
+    },
+    segment: 5,
+    fraction: 0.54
+  }
+];
+
 const indicatorBushes = {
   human: "assets/obstacles/human-indicator-bush.png",
   bear: "assets/obstacles/bear-indicator-bush.png"
@@ -148,12 +201,68 @@ function applyObstacleStyle(element, type) {
   element.style.top = "auto";
   element.style.bottom = "calc(var(--run-line-bottom) - 12px)";
   element.style.transform = "translateX(-50%)";
-
   if (type.zIndex) element.style.zIndex = type.zIndex;
+}
+
+function createObstacle(item) {
+  const fraction = item.fraction ?? (0.22 + Math.random() * 0.56);
+  const x = locationWidth * (1 + item.segment + fraction);
+
+  if (item.type.indicatorForm) {
+    const indicator = document.createElement("img");
+    indicator.className = `form-indicator-bush form-indicator-bush--${item.type.indicatorForm}`;
+    indicator.src = indicatorBushes[item.type.indicatorForm];
+    indicator.alt = item.type.indicatorForm === "bear"
+      ? "Красный куст: дальше нужен медведь"
+      : "Синий куст: дальше нужен человек";
+    indicator.style.position = "absolute";
+    indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
+    indicator.style.bottom = "calc(var(--run-line-bottom) - 12px)";
+    indicator.style.height = "auto";
+    indicator.style.transform = "translateX(-50%)";
+    indicator.style.pointerEvents = "none";
+    indicator.style.zIndex = "6";
+    world.appendChild(indicator);
+  }
+
+  const img = document.createElement("img");
+  img.className = `obstacle ${item.type.className}`;
+  img.src = item.type.src;
+  img.alt = item.type.alt;
+  img.dataset.obstacle = item.type.id;
+  img.style.left = `${x}px`;
+  applyObstacleStyle(img, item.type);
+  world.appendChild(img);
+
+  let hint = null;
+  if (item.type.hint) {
+    hint = document.createElement("div");
+    hint.className = `obstacle-hint obstacle-hint--${item.type.id}`;
+    hint.textContent = item.type.hint;
+    hint.title = item.type.rule;
+    hint.style.left = `${x}px`;
+    if (item.type.hintTop) hint.style.top = item.type.hintTop;
+    world.appendChild(hint);
+  }
+
+  obstacles.push({
+    ...item.type,
+    x,
+    element: img,
+    hint,
+    crossed: false,
+    inside: false,
+    attemptJump: null,
+    breaking: false,
+    breakTimer: null
+  });
 }
 
 function placeObstacles() {
   world.querySelectorAll(".obstacle, .obstacle-hint, .form-indicator-bush").forEach((element) => element.remove());
+  obstacles.forEach((obstacle) => {
+    if (obstacle.breakTimer) window.clearInterval(obstacle.breakTimer);
+  });
   obstacles = [];
 
   const types = obstacleTypes.flatMap((type) => [type, type]);
@@ -183,54 +292,10 @@ function placeObstacles() {
     }
   });
 
-  for (const item of plan) {
-    const fraction = item.fraction ?? (0.22 + Math.random() * 0.56);
-    const x = locationWidth * (1 + item.segment + fraction);
-
-    if (item.type.indicatorForm) {
-      const indicator = document.createElement("img");
-      indicator.className = `form-indicator-bush form-indicator-bush--${item.type.indicatorForm}`;
-      indicator.src = indicatorBushes[item.type.indicatorForm];
-      indicator.alt = item.type.indicatorForm === "bear"
-        ? "Красный куст: дальше нужен медведь"
-        : "Синий куст: дальше нужен человек";
-      indicator.style.position = "absolute";
-      indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
-      indicator.style.bottom = "calc(var(--run-line-bottom) - 12px)";
-      indicator.style.height = "auto";
-      indicator.style.transform = "translateX(-50%)";
-      indicator.style.pointerEvents = "none";
-      indicator.style.zIndex = "6";
-      world.appendChild(indicator);
-    }
-
-    const img = document.createElement("img");
-    img.className = `obstacle ${item.type.className}`;
-    img.src = item.type.src;
-    img.alt = item.type.alt;
-    img.dataset.obstacle = item.type.id;
-    img.style.left = `${x}px`;
-    applyObstacleStyle(img, item.type);
-    world.appendChild(img);
-
-    const hint = document.createElement("div");
-    hint.className = `obstacle-hint obstacle-hint--${item.type.id}`;
-    hint.textContent = item.type.hint;
-    hint.title = item.type.rule;
-    hint.style.left = `${x}px`;
-    if (item.type.hintTop) hint.style.top = item.type.hintTop;
-    world.appendChild(hint);
-
-    obstacles.push({
-      ...item.type,
-      x,
-      element: img,
-      hint,
-      crossed: false,
-      inside: false,
-      attemptJump: null
-    });
-  }
+  /* Пещерные препятствия намеренно добавляются только в сегменты mound-start/center/end. */
+  plan.push(...caveObstaclePlan);
+  plan.sort((a, b) => (a.segment + a.fraction) - (b.segment + b.fraction));
+  plan.forEach(createObstacle);
 }
 placeObstacles();
 
@@ -329,6 +394,16 @@ function closeTutorial() {
   lastFrameAt = performance.now();
 }
 
+function resetCaveWall(obstacle) {
+  if (obstacle.breakTimer) {
+    window.clearInterval(obstacle.breakTimer);
+    obstacle.breakTimer = null;
+  }
+  obstacle.breaking = false;
+  obstacle.element.style.opacity = "1";
+  obstacle.element.style.visibility = "visible";
+}
+
 function resetRun() {
   running = gameStarted;
   worldX = 0;
@@ -347,6 +422,7 @@ function resetRun() {
     obstacle.crossed = false;
     obstacle.inside = false;
     obstacle.attemptJump = null;
+    if (obstacle.mode === "cave-wall") resetCaveWall(obstacle);
   });
 }
 
@@ -454,11 +530,46 @@ function jumpDistanceAtBoundary(activeJump, now, speed, center, boundary) {
   return speed * Math.max(0, activeJump.duration - elapsedAtBoundary);
 }
 
+function breakCaveWall(obstacle) {
+  if (obstacle.breaking || obstacle.crossed) return;
+  obstacle.breaking = true;
+  obstacle.crossed = true;
+
+  let flashes = 0;
+  obstacle.breakTimer = window.setInterval(() => {
+    flashes += 1;
+    obstacle.element.style.opacity = flashes % 2 ? "0.18" : "1";
+    if (flashes >= 6) {
+      window.clearInterval(obstacle.breakTimer);
+      obstacle.breakTimer = null;
+      obstacle.element.style.opacity = "0";
+      obstacle.element.style.visibility = "hidden";
+    }
+  }, 75);
+}
+
 function updateObstacleCollisions(previousCenter, center, now, speed, landedJump = null) {
   const airborneJump = jump && now >= jump.takeoffAt ? jump : null;
 
   for (const obstacle of obstacles) {
     if (obstacle.crossed) continue;
+
+    if (obstacle.mode === "all-pass") {
+      if (previousCenter < obstacle.x && center >= obstacle.x) obstacle.crossed = true;
+      continue;
+    }
+
+    if (obstacle.mode === "cave-wall") {
+      if (previousCenter < obstacle.x && center >= obstacle.x) {
+        const isGrounded = !airborneJump;
+        if (hero.dataset.form !== "bear" || !isGrounded) {
+          failRun();
+          return true;
+        }
+        breakCaveWall(obstacle);
+      }
+      continue;
+    }
 
     if (obstacle.id === "river") {
       const halfRiver = obstacle.element.offsetWidth * 0.4;
@@ -522,7 +633,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       continue;
     }
 
-    if (!obstacle.crossed && previousCenter < obstacle.x && center >= obstacle.x) {
+    if (previousCenter < obstacle.x && center >= obstacle.x) {
       obstacle.crossed = true;
       const requiredForm = obstacle.form;
       const isGrounded = !airborneJump;
