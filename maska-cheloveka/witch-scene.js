@@ -136,7 +136,7 @@
   function watchWitch() {
     if (!triggered && !completed && gameStarted && running && !tutorialActive) {
       const center = worldX + heroScreenX();
-      const approachDistance = innerWidth * 0.28;
+      const approachDistance = innerWidth * 0.14;
       if (center >= currentWitchX() - approachDistance) triggerWitchScene();
     }
     requestAnimationFrame(watchWitch);
