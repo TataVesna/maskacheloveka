@@ -41,34 +41,34 @@ const obstacleTypes = [
   {
     id: "ravine", src: "assets/obstacles/ravine-bear-jump.png", className: "obstacle--ravine",
     alt: "Овраг: перепрыгнуть можно медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
-    rule: "Для оврага нужен прыжок медведем.", mode: "ravine"
+    rule: "Для оврага нужен прыжок медведем.", mode: "ravine", indicatorForm: "bear"
   },
   {
     id: "river", src: "assets/obstacles/deep-river-bear-wade-filled.png", className: "obstacle--river",
     alt: "Глубокая река: перейти вброд может медведь", hint: "МЕДВЕДЬ — ВБРОД",
-    rule: "Глубокую реку вброд проходит медведь.", mode: "ground", form: "bear"
+    rule: "Глубокую реку вброд проходит медведь.", mode: "ground", form: "bear", indicatorForm: "bear"
   },
   {
     id: "bridge", src: "assets/obstacles/fragile-bridge-human-pass.png", className: "obstacle--bridge",
     alt: "Хрупкий мост: пройти может человек", hint: "ЧЕЛОВЕК — ПО МОСТУ",
-    rule: "Хрупкий мост выдерживает только человека.", mode: "ground", form: "human"
+    rule: "Хрупкий мост выдерживает только человека.", mode: "ground", form: "human", indicatorForm: "human"
   },
   {
     id: "passage", src: "assets/cave/cave-narrow-passage-human.png", className: "obstacle--passage",
     alt: "Узкий проход между камнями: пройти может человек", hint: "ЧЕЛОВЕК — ЧЕРЕЗ ПРОХОД",
-    rule: "В узкий проход проходит только человек.", mode: "ground", form: "human"
+    rule: "В узкий проход проходит только человек.", mode: "ground", form: "human", indicatorForm: "human"
   },
   {
     id: "rubble", src: "assets/cave/cave-rubble-bear.png", className: "obstacle--rubble",
     alt: "Заваленные камни: перепрыгнуть можно только медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
-    rule: "Заваленные камни можно перепрыгнуть только медведем.", mode: "bear-jump"
-  },
-  {
-    id: "bush", src: "assets/cave/cave-bush-obstacle.png", className: "obstacle--bush",
-    alt: "Густой кустарник: человек перепрыгивает, медведь проходит или прыгает", hint: "ЧЕЛОВЕК — ПРЫЖОК · МЕДВЕДЬ — НАПРОЛОМ ИЛИ ПРЫЖОК",
-    rule: "Человек должен перепрыгнуть куст. Медведь может пройти напролом или перепрыгнуть.", mode: "bush"
+    rule: "Заваленные камни можно перепрыгнуть только медведем.", mode: "bear-jump", indicatorForm: "bear"
   }
 ];
+
+const indicatorBushes = {
+  human: "assets/obstacles/human-indicator-bush.png",
+  bear: "assets/obstacles/bear-indicator-bush.png"
+};
 
 let obstacles = [];
 let worldX = 0;
@@ -120,6 +120,23 @@ function placeObstacles() {
     const fraction = item.fraction ?? (0.22 + Math.random() * 0.56);
     // Первый сегмент маршрута — берлога, поэтому препятствия начинаются со следующей сцены.
     const x = locationWidth * (1 + item.segment + fraction);
+
+    const indicator = document.createElement("img");
+    indicator.className = `form-indicator-bush form-indicator-bush--${item.type.indicatorForm}`;
+    indicator.src = indicatorBushes[item.type.indicatorForm];
+    indicator.alt = item.type.indicatorForm === "bear"
+      ? "Красный куст: дальше нужен медведь"
+      : "Синий куст: дальше нужен человек";
+    indicator.style.position = "absolute";
+    indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
+    indicator.style.bottom = "16.8dvh";
+    indicator.style.width = "clamp(90px, 9vw, 150px)";
+    indicator.style.height = "auto";
+    indicator.style.transform = "translateX(-50%)";
+    indicator.style.pointerEvents = "none";
+    indicator.style.zIndex = "6";
+    world.appendChild(indicator);
+
     const img = document.createElement("img");
     img.className = `obstacle ${item.type.className}`;
     img.src = item.type.src;
@@ -294,63 +311,6 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
           wading = null;
           hero.classList.remove("wading");
           hero.style.transform = "";
-        }
-      }
-      continue;
-    }
-
-    if (obstacle.mode === "bush") {
-      const halfBush = obstacle.element.offsetWidth * 0.5;
-      const bushStart = obstacle.x - halfBush;
-      const bushEnd = obstacle.x + halfBush;
-      if (!obstacle.inside && previousCenter < bushStart && center >= bushStart) {
-        obstacle.inside = true;
-        const enteringJump = airborneJump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, bushStart) > 0 ? landedJump : null);
-        const bearCanPass = hero.dataset.form === "bear" && (!enteringJump || enteringJump.form === "bear");
-        if (bearCanPass) {
-          if (center >= bushEnd) {
-            obstacle.inside = false;
-            obstacle.crossed = true;
-          }
-        } else if (enteringJump) {
-          obstacle.attemptJump = enteringJump;
-        } else {
-          failRun();
-          return true;
-        }
-      }
-      if (obstacle.inside) {
-        if (obstacle.attemptJump) {
-          if (landedJump === obstacle.attemptJump) {
-            const cleared = center >= bushEnd
-              && obstacle.attemptJump.form === "human"
-              && hero.dataset.form === "human";
-            if (!cleared) {
-              failRun();
-              return true;
-            }
-            obstacle.inside = false;
-            obstacle.crossed = true;
-            obstacle.attemptJump = null;
-          }
-          continue;
-        }
-        if (center >= bushEnd) {
-          const bearCleared = hero.dataset.form === "bear" && (!airborneJump || airborneJump.form === "bear");
-          const humanCleared = hero.dataset.form === "human" && (!airborneJump || airborneJump.form === "human");
-          if (!bearCleared && !humanCleared) {
-            failRun();
-            return true;
-          }
-          obstacle.inside = false;
-          obstacle.crossed = true;
-        } else {
-          const bearCanPass = hero.dataset.form === "bear" && (!airborneJump || airborneJump.form === "bear");
-          const humanIsJumping = hero.dataset.form === "human" && airborneJump?.form === "human";
-          if (!bearCanPass && !humanIsJumping) {
-            failRun();
-            return true;
-          }
         }
       }
       continue;
