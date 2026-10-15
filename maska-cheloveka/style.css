@@ -87,13 +87,6 @@ body {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(24px, 5vw, 72px);
-  background:
-    linear-gradient(90deg, rgba(15, 12, 10, 0.78), rgba(15, 12, 10, 0.42) 55%, rgba(15, 12, 10, 0.62)),
-    url("assets/locations/den.png") center / cover no-repeat;
   transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
@@ -103,57 +96,77 @@ body {
   pointer-events: none;
 }
 
-.start-screen__panel {
-  width: min(760px, 78vw);
-  padding: clamp(28px, 4vw, 56px);
-  border: 1px solid rgba(244, 231, 204, 0.45);
-  background: rgba(25, 20, 16, 0.66);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+/* ===== ОБУЧЕНИЕ ===== */
+
+#tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: clamp(42px, 8vh, 92px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.08) 48%, transparent 72%);
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
+  transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+#tutorial-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tutorial-card {
+  width: min(720px, 78vw);
+  padding: clamp(18px, 2.4vw, 30px) clamp(24px, 3.2vw, 42px);
+  border: 1px solid rgba(244, 231, 204, 0.52);
+  background: rgba(26, 21, 17, 0.82);
   color: #f5ead5;
   text-align: center;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
-.start-screen__eyebrow {
+.tutorial-title {
   margin-bottom: 14px;
-  font: 600 clamp(11px, 1.15vw, 16px)/1.2 Arial, sans-serif;
-  letter-spacing: 0.16em;
+  font: 700 clamp(22px, 2.4vw, 36px)/1 Georgia, "Times New Roman", serif;
+}
+
+.tutorial-controls {
+  display: flex;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 52px);
+  flex-wrap: wrap;
+  font: 400 clamp(14px, 1.35vw, 20px)/1.4 Arial, sans-serif;
+}
+
+.tutorial-controls b {
+  font-weight: 700;
+}
+
+.tutorial-controls--touch {
+  display: none;
+}
+
+.tutorial-continue {
+  margin-top: 16px;
+  font: 400 clamp(11px, 1vw, 14px)/1.3 Arial, sans-serif;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.82;
+  opacity: 0.68;
 }
 
-#start-title {
-  font: 700 clamp(44px, 7vw, 108px)/0.95 Georgia, "Times New Roman", serif;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-}
+@media (pointer: coarse) {
+  .tutorial-controls--desktop {
+    display: none;
+  }
 
-.start-screen__subtitle {
-  width: min(600px, 100%);
-  margin: 22px auto 30px;
-  font: 400 clamp(16px, 1.65vw, 24px)/1.4 Arial, sans-serif;
-  color: #eadcc1;
-}
-
-#start-button {
-  min-width: 180px;
-  padding: 14px 28px;
-  border: 1px solid #f0dfbd;
-  background: #ead9b8;
-  color: #201811;
-  font: 700 clamp(15px, 1.25vw, 18px)/1 Arial, sans-serif;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-
-#start-button:hover {
-  transform: translateY(-2px);
-  background: #f3e6cc;
-}
-
-#start-button:active {
-  transform: translateY(0);
+  .tutorial-controls--touch {
+    display: flex;
+  }
 }
 
 .obstacle {
@@ -268,7 +281,6 @@ body {
   left: 18vw;
   bottom: calc(var(--run-line-bottom) - 12px);
   z-index: 10;
-
   transition: width 0.15s ease;
 }
 
@@ -332,4 +344,3 @@ body {
     display: flex;
   }
 }
-
