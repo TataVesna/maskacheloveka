@@ -10,6 +10,7 @@
   const BUSH_VERTICAL_OFFSET = 35;
   const CROWD_VERTICAL_LIFT = 5;
   const WITCH_VERTICAL_LIFT = 5;
+  const STUMP_VERTICAL_LIFT = 25;
   const STUMP_SCALE = 2 / 3;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
@@ -106,7 +107,11 @@
       setScaledImageWidth(obstacle.element, obstacleScale);
 
       const baseBottom = obstacle.id === 'crowd' ? 40 : 30;
-      const lift = obstacle.id === 'crowd' ? CROWD_VERTICAL_LIFT : 0;
+      const lift = obstacle.id === 'crowd'
+        ? CROWD_VERTICAL_LIFT
+        : obstacle.id === 'stump'
+          ? STUMP_VERTICAL_LIFT
+          : 0;
       const loweredBottom = (baseBottom - OBSTACLE_VERTICAL_OFFSET + lift) * sceneScale;
       obstacle.element.style.setProperty('bottom', `${loweredBottom}px`, 'important');
     });
