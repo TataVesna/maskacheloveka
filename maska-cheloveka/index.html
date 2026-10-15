@@ -11,6 +11,15 @@
   <title>Маска человека</title>
 
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Все игровые препятствия и кусты опираются на нижнюю границу экрана. */
+    #world .obstacle,
+    #world .form-indicator-bush {
+      top: auto !important;
+      bottom: 0 !important;
+      transform: translateX(-50%) !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -67,6 +76,5 @@
 </div>
 
   <script src="game.js"></script>
-  <script src="river-fix.js"></script>
 </body>
 </html>
