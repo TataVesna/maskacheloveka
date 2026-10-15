@@ -217,6 +217,11 @@ body {
   z-index: 4;
 }
 
+/* Толпа развёрнута в противоположную сторону без изменения логики коллизии. */
+.obstacle--crowd {
+  transform: translate(-50%, -50%) scaleX(-1) !important;
+}
+
 .obstacle-hint {
   position: absolute;
   z-index: 8;
