@@ -133,7 +133,7 @@ function placeObstacles() {
     indicator.style.position = "absolute";
     indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
     indicator.style.bottom = "16.8dvh";
-    indicator.style.width = "clamp(90px, 9vw, 150px)";
+    indicator.style.width = "clamp(120px, 12vw, 190px)";
     indicator.style.height = "auto";
     indicator.style.transform = "translateX(-50%)";
     indicator.style.pointerEvents = "none";
@@ -198,7 +198,7 @@ function updateHeroAnimation(now) {
     return;
   }
 
-  const cycleDuration = form === "bear" ? 285 : 210;
+  const cycleDuration = form === "bear" ? 420 : 330;
   const runFrames = spriteFrames[form].run;
   const frameIndex = Math.floor(now / (cycleDuration / runFrames.length)) % runFrames.length;
   setHeroSpriteFrame(form, "run", frameIndex);
