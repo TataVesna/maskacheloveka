@@ -10,6 +10,7 @@
   const REVEAL_DURATION = 1200;
 
   let triggered = false;
+  window.finalSequenceActive = false;
 
   const overlay = document.createElement("div");
   overlay.id = "final-scene-overlay";
@@ -61,8 +62,9 @@
   function startFinalScene() {
     if (triggered) return;
     triggered = true;
+    window.finalSequenceActive = true;
 
-    const startingSpeed = Number(speedSlider.value) || 2.5;
+    const startingSpeed = Number(speedSlider.value) || 1.5;
     const minimumSpeed = Math.min(startingSpeed, 0.45);
     const startedAt = performance.now();
 
