@@ -1,5 +1,5 @@
-/* Покадровая анимация прыжка для человека и медведя.
-   Используются готовые кадры assets/characters/frames/*-jump-1..4.png.
+/* Покадровая анимация прыжка только для медведя.
+   У человека во время прыжка остаётся обычный актуальный кадр бега.
    Траектория, высота и дальность прыжка остаются в game.js. */
 
 updateHeroAnimation = function (now) {
@@ -8,11 +8,15 @@ updateHeroAnimation = function (now) {
   const form = hero.dataset.form;
 
   if (jump && hero.classList.contains("jumping")) {
-    const jumpFrames = spriteFrames[form].jump;
+    if (form === "human") {
+      setHeroSpriteFrame("human", "run", 0);
+      return;
+    }
 
-    /* До фактического отрыва показываем первый кадр подготовки. */
+    const jumpFrames = spriteFrames.bear.jump;
+
     if (now < jump.takeoffAt) {
-      setHeroSpriteFrame(form, "jump", 0);
+      setHeroSpriteFrame("bear", "jump", 0);
       return;
     }
 
@@ -21,19 +25,13 @@ updateHeroAnimation = function (now) {
       Math.min((now - jump.takeoffAt) / (jump.duration * 1000), 1)
     );
 
-    /*
-      1 — отрыв,
-      2 — набор высоты,
-      3 — верхняя точка / начало снижения,
-      4 — приземление.
-    */
     let frameIndex = 0;
     if (progress >= 0.22 && progress < 0.5) frameIndex = 1;
     else if (progress >= 0.5 && progress < 0.76) frameIndex = 2;
     else if (progress >= 0.76) frameIndex = 3;
 
     frameIndex = Math.min(frameIndex, jumpFrames.length - 1);
-    setHeroSpriteFrame(form, "jump", frameIndex);
+    setHeroSpriteFrame("bear", "jump", frameIndex);
     return;
   }
 
@@ -43,6 +41,5 @@ updateHeroAnimation = function (now) {
   setHeroSpriteFrame(form, "run", frameIndex);
 };
 
-/* Убираем старые программные наклоны/растяжения: теперь движение только покадровое. */
 heroImage.style.transition = "none";
 heroImage.style.transform = "";
