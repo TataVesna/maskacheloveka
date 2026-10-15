@@ -10,7 +10,7 @@
   const BUSH_VERTICAL_OFFSET = 35;
   const HERO_VERTICAL_LIFT = 1;
   const CROWD_VERTICAL_LIFT = 6;
-  const WITCH_VERTICAL_LIFT = 6;
+  const WITCH_VERTICAL_LIFT = 11;
   const STUMP_VERTICAL_LIFT = 50;
   const STUMP_SCALE = 2 / 3;
 
@@ -126,7 +126,7 @@
       indicator.style.setProperty('bottom', `${loweredBushBottom}px`, 'important');
     });
 
-    /* Ведьма стоит на линии бега и дополнительно поднята на 6 px. */
+    /* Ведьма стоит на линии бега и дополнительно поднята на 11 px. */
     const witch = document.getElementById('witch-midpoint');
     if (witch) {
       const logicalX = Number(witch.dataset.logicalX);
