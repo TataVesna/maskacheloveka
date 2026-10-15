@@ -145,17 +145,9 @@ function shuffle(items) {
 }
 
 function applyObstacleStyle(element, type) {
-  if (type.width) element.style.width = type.width;
-
-  if (type.groundAnchor === "top") {
-    element.style.top = "calc(100% - var(--run-line-bottom))";
-    element.style.bottom = "auto";
-    element.style.transform = "translateX(-50%)";
-  } else {
-    element.style.top = "50%";
-    element.style.bottom = "auto";
-    element.style.transform = "translate(-50%, -50%)";
-  }
+  element.style.top = "auto";
+  element.style.bottom = "calc(var(--run-line-bottom) - 12px)";
+  element.style.transform = "translateX(-50%)";
 
   if (type.zIndex) element.style.zIndex = type.zIndex;
 }
@@ -204,7 +196,7 @@ function placeObstacles() {
         : "Синий куст: дальше нужен человек";
       indicator.style.position = "absolute";
       indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
-      indicator.style.bottom = "var(--run-line-bottom)";
+      indicator.style.bottom = "calc(var(--run-line-bottom) - 12px)";
       indicator.style.height = "auto";
       indicator.style.transform = "translateX(-50%)";
       indicator.style.pointerEvents = "none";
