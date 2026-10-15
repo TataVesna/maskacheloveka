@@ -1,18 +1,15 @@
-/* Пещерные препятствия находятся только на центральном экране пещеры (mound-center). */
+/* Пещерные препятствия находятся только на центральном экране пещеры (mound-center).
+   Каменная стена и высокий проход образуют одну композицию и всегда стоят вместе. */
 (() => {
-  const caveFractions = {
-    "cave-low-passage": 0.24,
-    "cave-wall": 0.5,
-    "cave-high-passage": 0.76
-  };
+  const sharedWallFraction = 0.68;
 
-  const caveIndicators = {
-    "cave-low-passage": "human",
-    "cave-wall": "bear"
+  const caveFractions = {
+    "cave-low-passage": 0.28,
+    "cave-wall": sharedWallFraction,
+    "cave-high-passage": sharedWallFraction
   };
 
   const caveCenterSegment = 4;
-  const indicatorOffset = Math.min(innerWidth * 0.22, locationWidth * 0.1);
 
   for (const obstacle of obstacles) {
     const fraction = caveFractions[obstacle.id];
@@ -26,23 +23,14 @@
       obstacle.hint.style.left = `${x}px`;
     }
 
-    const indicatorForm = caveIndicators[obstacle.id];
-    if (!indicatorForm) continue;
+    /* Высокий проход служит общей верхней частью композиции,
+       разрушаемая стена находится непосредственно под ним. */
+    if (obstacle.id === "cave-high-passage") {
+      obstacle.element.style.zIndex = "4";
+    }
 
-    const indicator = document.createElement("img");
-    indicator.className = `form-indicator-bush form-indicator-bush--${indicatorForm}`;
-    indicator.dataset.caveIndicator = "true";
-    indicator.src = indicatorBushes[indicatorForm];
-    indicator.alt = indicatorForm === "bear"
-      ? "Красный куст: дальше нужен медведь"
-      : "Синий куст: дальше нужен человек";
-    indicator.style.position = "absolute";
-    indicator.style.left = `${x - indicatorOffset}px`;
-    indicator.style.bottom = "calc(var(--run-line-bottom) - 12px)";
-    indicator.style.height = "auto";
-    indicator.style.transform = "translateX(-50%)";
-    indicator.style.pointerEvents = "none";
-    indicator.style.zIndex = "6";
-    world.appendChild(indicator);
+    if (obstacle.id === "cave-wall") {
+      obstacle.element.style.zIndex = "5";
+    }
   }
 })();
