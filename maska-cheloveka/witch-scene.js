@@ -1,4 +1,4 @@
-/* Встреча с ведьмой в середине маршрута.
+/* Встреча с ведьмой на выходе из пещеры.
    Герой останавливается, камера приближается, затем игрок кликает/тапает по ведьме.
    Позже вместо самой ведьмы сюда можно подключить отдельное интерактивное изображение. */
 (() => {
@@ -17,8 +17,8 @@
   witch.style.webkitUserDrag = "none";
   world.appendChild(witch);
 
-  /* Ровно середина маршрута из 11 экранов. */
-  const witchRoutePosition = 5.5;
+  /* Правый край последнего экрана пещеры (mound-end), с небольшим запасом от стыка. */
+  const witchRoutePosition = 6.86;
   const currentLocationWidth = () => innerHeight * (3000 / 1080);
   const currentWitchX = () => currentLocationWidth() * witchRoutePosition;
   witch.style.left = `${currentWitchX()}px`;
@@ -58,7 +58,6 @@
       game.style.transform = "scale(1.42)";
     });
 
-    /* Клик становится доступен после завершения приближения. */
     window.setTimeout(() => {
       if (!completed) setWitchInteractive(true);
     }, zoomDuration);
@@ -71,14 +70,11 @@
 
     completed = true;
     setWitchInteractive(false);
-
     game.style.transform = "scale(1)";
 
-    /* После встречи активируем второй чекпоинт чуть впереди ведьмы,
-       чтобы при возрождении герой не оказался внутри соседнего препятствия. */
-    window.activateWitchCheckpoint?.(witchRoutePosition + 0.1);
+    /* Чекпоинт ставим сразу после ведьмы, но до первого препятствия следующей локации. */
+    window.activateWitchCheckpoint?.(witchRoutePosition + 0.08);
 
-    /* Сначала камера возвращается, только затем герой продолжает бег. */
     window.setTimeout(() => {
       hero.classList.remove("witch-paused");
       hero.classList.add("running");
