@@ -1,6 +1,6 @@
 /* Расстановка обычных препятствий вокруг пещеры.
-   Центральная пещера и экран с ведьмой остаются свободными от обычных препятствий.
-   После пещеры продолжаются обычные препятствия маршрута. */
+   Три экрана пещеры остаются свободными от обычных препятствий.
+   Пни встречаются чаще, чтобы игрок чаще использовал прыжок. */
 (() => {
   const caveObstacleIds = new Set([
     "cave-low-passage",
@@ -12,8 +12,32 @@
     .filter((obstacle) => !caveObstacleIds.has(obstacle.id))
     .sort((a, b) => a.x - b.x);
 
-  /* Пень должен уверенно перепрыгиваться в обоих обликах.
-     Визуальный размер не меняем — уменьшаем только игровую ширину зоны прыжка. */
+  /* Добавляем ещё два пня поверх двух исходных: всего по маршруту будет 4 пня. */
+  const stumpTemplate = regularObstacles.find((obstacle) => obstacle.id === "stump");
+  if (stumpTemplate) {
+    for (let i = 0; i < 2; i++) {
+      const element = stumpTemplate.element.cloneNode(true);
+      element.dataset.obstacle = "stump";
+      world.appendChild(element);
+
+      const stump = {
+        ...stumpTemplate,
+        element,
+        hint: null,
+        crossed: false,
+        inside: false,
+        attemptJump: null,
+        breaking: false,
+        breakTimer: null,
+        gapFactor: 0.28
+      };
+
+      obstacles.push(stump);
+      regularObstacles.push(stump);
+    }
+  }
+
+  /* Все пни должны уверенно перепрыгиваться в обоих обликах. */
   regularObstacles
     .filter((obstacle) => obstacle.id === "stump")
     .forEach((obstacle) => {
@@ -22,50 +46,25 @@
 
   /* segment считается после берлоги:
      0..2 — тайга,
-     3..5 — три экрана пещеры,
-     6..9 — река, городище и финальная локация.
-     Все три экрана пещеры резервируем: в центре только пещерные препятствия,
-     на выходе справа стоит ведьма. */
+     3..5 — пещера,
+     6 — река,
+     7..8 — городище,
+     9 — финальная локация.
+     В пещеру обычные препятствия не ставим. */
   const slots = [
-    { segment: 0, fraction: 0.34 },
-    { segment: 0, fraction: 0.72 },
-    { segment: 1, fraction: 0.48 },
-    { segment: 2, fraction: 0.34 },
-    { segment: 2, fraction: 0.72 },
-    { segment: 6, fraction: 0.34 },
-    { segment: 6, fraction: 0.72 },
-    { segment: 7, fraction: 0.48 },
-    { segment: 8, fraction: 0.50 },
-    { segment: 9, fraction: 0.46 }
+    { segment: 0, fraction: 0.28 },
+    { segment: 0, fraction: 0.68 },
+    { segment: 1, fraction: 0.30 },
+    { segment: 1, fraction: 0.70 },
+    { segment: 2, fraction: 0.30 },
+    { segment: 2, fraction: 0.70 },
+    { segment: 6, fraction: 0.28 },
+    { segment: 6, fraction: 0.70 },
+    { segment: 7, fraction: 0.30 },
+    { segment: 7, fraction: 0.70 },
+    { segment: 8, fraction: 0.34 },
+    { segment: 8, fraction: 0.72 }
   ];
-
-  const indicatorOffset = Math.min(innerWidth * 0.22, locationWidth * 0.1);
-  const availableIndicators = [...world.querySelectorAll('.form-indicator-bush')]
-    .filter((indicator) => indicator.dataset.caveIndicator !== 'true');
-
-  /* Сначала связываем существующие кусты с их обычными препятствиями по старой позиции. */
-  const indicatorByObstacle = new Map();
-  for (const obstacle of regularObstacles) {
-    if (!obstacle.indicatorForm) continue;
-
-    const expectedX = obstacle.x - indicatorOffset;
-    const className = `form-indicator-bush--${obstacle.indicatorForm}`;
-    let closest = null;
-    let closestDistance = Infinity;
-
-    for (const indicator of availableIndicators) {
-      if (!indicator.isConnected || !indicator.classList.contains(className)) continue;
-      if ([...indicatorByObstacle.values()].includes(indicator)) continue;
-      const x = parseFloat(indicator.style.left || '0');
-      const distance = Math.abs(x - expectedX);
-      if (distance < closestDistance) {
-        closest = indicator;
-        closestDistance = distance;
-      }
-    }
-
-    if (closest) indicatorByObstacle.set(obstacle, closest);
-  }
 
   regularObstacles.forEach((obstacle, index) => {
     const slot = slots[index % slots.length];
@@ -75,18 +74,5 @@
     obstacle._logicalX = x / locationWidth;
     obstacle.element.style.left = `${x}px`;
     if (obstacle.hint) obstacle.hint.style.left = `${x}px`;
-
-    const indicator = indicatorByObstacle.get(obstacle);
-    if (!indicator) return;
-
-    /* Перед толпой куст не нужен. */
-    if (obstacle.id === 'crowd') {
-      indicator.remove();
-      return;
-    }
-
-    const indicatorX = x - indicatorOffset;
-    indicator.style.left = `${indicatorX}px`;
-    indicator.dataset.logicalX = String(indicatorX / locationWidth);
   });
 })();
