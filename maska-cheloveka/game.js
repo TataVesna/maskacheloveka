@@ -5,7 +5,6 @@ const heroImage = document.getElementById("hero-image");
 const speedSlider = document.getElementById("speed-slider");
 const speedValue = document.getElementById("speed-value");
 const startScreen = document.getElementById("start-screen");
-const startButton = document.getElementById("start-button");
 const jumpPreparationMs = 50;
 
 const spriteFrames = {
@@ -359,11 +358,24 @@ function failRun() {
   window.setTimeout(resetRun, 520);
 }
 
-startButton.addEventListener("click", () => {
+function startGame() {
+  if (gameStarted) return;
   gameStarted = true;
   startScreen.classList.add("is-hidden");
   resetRun();
   lastFrameAt = performance.now();
+}
+
+startScreen.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  startGame();
+}, { once: true });
+
+startScreen.addEventListener("keydown", (event) => {
+  if (event.code === "Enter" || event.code === "Space") {
+    event.preventDefault();
+    startGame();
+  }
 });
 
 game.addEventListener("pointerdown", (event) => {
