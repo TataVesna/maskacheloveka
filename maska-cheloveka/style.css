@@ -213,11 +213,6 @@ body {
   height: auto;
 }
 
-/* Толпа развёрнута в противоположную сторону без вертикального смещения. */
-.obstacle--crowd {
-  transform: translateX(-50%) scaleX(-1) !important;
-}
-
 .obstacle-hint {
   position: absolute;
   z-index: 8;
