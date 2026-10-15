@@ -7,6 +7,7 @@
   const HERO_BASE_WIDTH = { human: 114, bear: 162 };
   const WITCH_BASE_WIDTH = 138;
   const OBSTACLE_VERTICAL_OFFSET = 35;
+  const BUSH_VERTICAL_OFFSET = 35;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
 
@@ -16,6 +17,32 @@
 
   function currentLocationWidth() {
     return innerHeight * LOCATION_ASPECT;
+  }
+
+  /* У толпы людей больше нет цветового куста-подсказки. */
+  function removeCrowdIndicators() {
+    const indicators = [...world.querySelectorAll('.form-indicator-bush--human')];
+    const offset = Math.min(innerWidth * 0.22, currentLocationWidth() * 0.1);
+
+    obstacles
+      .filter((obstacle) => obstacle.id === 'crowd')
+      .forEach((crowd) => {
+        const expectedX = crowd.x - offset;
+        let closest = null;
+        let closestDistance = Infinity;
+
+        indicators.forEach((indicator) => {
+          if (!indicator.isConnected) return;
+          const x = parseFloat(indicator.style.left || '0');
+          const distance = Math.abs(x - expectedX);
+          if (distance < closestDistance) {
+            closest = indicator;
+            closestDistance = distance;
+          }
+        });
+
+        if (closest && closestDistance < 6) closest.remove();
+      });
   }
 
   function rememberLogicalPositions() {
@@ -79,22 +106,22 @@
       obstacle.element.style.setProperty('bottom', `${loweredBottom}px`, 'important');
     });
 
-    /* Цветные кусты получают тот же коэффициент и сохраняют позицию
-       относительно конкретного экрана маршрута. */
+    /* Цветные кусты опущены на те же 35 px, что и препятствия. */
     world.querySelectorAll('.form-indicator-bush').forEach((indicator) => {
       const logicalX = Number(indicator.dataset.logicalX);
       if (Number.isFinite(logicalX)) indicator.style.left = `${logicalX * newLocationWidth}px`;
       setScaledImageWidth(indicator);
-      indicator.style.setProperty('bottom', `${30 * sceneScale}px`, 'important');
+      const loweredBushBottom = (30 - BUSH_VERTICAL_OFFSET) * sceneScale;
+      indicator.style.setProperty('bottom', `${loweredBushBottom}px`, 'important');
     });
 
-    /* Ведьма использует дизайнерскую ширину 138 px при высоте сцены 1080. */
+    /* Ведьма стоит на той же линии земли, что и бегущий персонаж. */
     const witch = document.getElementById('witch-midpoint');
     if (witch) {
       const logicalX = Number(witch.dataset.logicalX);
       if (Number.isFinite(logicalX)) witch.style.left = `${logicalX * newLocationWidth}px`;
       witch.style.setProperty('width', `${WITCH_BASE_WIDTH * sceneScale}px`, 'important');
-      witch.style.setProperty('bottom', `${30 * sceneScale}px`, 'important');
+      witch.style.setProperty('bottom', `calc(var(--run-line-bottom) - ${12 * sceneScale}px)`, 'important');
     }
 
     /* При изменении размеров iframe/окна сохраняем ту же точку маршрута. */
@@ -109,6 +136,7 @@
     previousLocationWidth = newLocationWidth;
   }
 
+  removeCrowdIndicators();
   rememberLogicalPositions();
   applyScale({ preserveScroll: false });
 
