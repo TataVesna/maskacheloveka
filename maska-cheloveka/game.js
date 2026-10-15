@@ -7,9 +7,9 @@ const speedValue = document.getElementById("speed-value");
 const startScreen = document.getElementById("start-screen");
 const startButton = document.getElementById("start-button");
 const jumpPreparationMs = 50;
+
 const spriteFrames = {
   human: {
-    // Авторские PNG-кадры бега.
     run: [
       "assets/characters/human-1.png",
       "assets/characters/human-2.png",
@@ -18,7 +18,6 @@ const spriteFrames = {
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-jump-${frame}.png`)
   },
   bear: {
-    // Авторские PNG-кадры бега.
     run: [
       "assets/characters/bear-1.png",
       "assets/characters/bear-2.png",
@@ -27,6 +26,7 @@ const spriteFrames = {
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-jump-${frame}.png`)
   }
 };
+
 const spriteImageCache = new Map();
 Object.values(spriteFrames).forEach((actions) => {
   Object.values(actions).flat().forEach((path) => {
@@ -39,31 +39,115 @@ Object.values(spriteFrames).forEach((actions) => {
 const css = getComputedStyle(document.documentElement);
 const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * innerHeight / 100;
 const heroScreenX = () => hero.offsetLeft + hero.offsetWidth / 2;
+
 const obstacleTypes = [
   {
-    id: "ravine", src: "assets/obstacles/cliff-bear-jump.png", className: "obstacle--ravine",
-    alt: "Овраг: перепрыгнуть можно медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
-    rule: "Для оврага нужен прыжок медведем.", mode: "ravine", indicatorForm: "bear"
+    id: "ravine",
+    src: "assets/obstacles/cliff-bear-jump.png",
+    className: "obstacle--ravine",
+    alt: "Овраг: перепрыгнуть можно медведем",
+    hint: "МЕДВЕДЬ — ПРЫЖОК",
+    rule: "Для оврага нужен прыжок медведем.",
+    mode: "ravine",
+    indicatorForm: "bear",
+    width: "63vw",
+    bottom: "20.1dvh",
+    transform: "translate(-50%, 60%)",
+    zIndex: "4",
+    hintTop: "61vh",
+    gapFactor: 0.15
   },
   {
-    id: "river", src: "assets/obstacles/river-ford-bear.png", className: "obstacle--river",
-    alt: "Глубокая река: перейти вброд может медведь", hint: "МЕДВЕДЬ — ВБРОД",
-    rule: "Глубокую реку вброд проходит медведь.", mode: "ground", form: "bear", indicatorForm: "bear"
+    id: "river",
+    src: "assets/obstacles/river-ford-bear.png",
+    className: "obstacle--river",
+    alt: "Глубокая река: перейти вброд может медведь",
+    hint: "МЕДВЕДЬ — ВБРОД",
+    rule: "Глубокую реку вброд проходит медведь.",
+    mode: "ground",
+    form: "bear",
+    indicatorForm: "bear",
+    width: "clamp(460px, 55vw, 860px)",
+    bottom: "15.8dvh",
+    transform: "translate(-50%, 68%)",
+    zIndex: "4",
+    hintTop: "68vh"
   },
   {
-    id: "bridge", src: "assets/obstacles/river-bridge-human.png", className: "obstacle--bridge",
-    alt: "Хрупкий мост: пройти может человек", hint: "ЧЕЛОВЕК — ПО МОСТУ",
-    rule: "Хрупкий мост выдерживает только человека.", mode: "ground", form: "human", indicatorForm: "human"
+    id: "bridge",
+    src: "assets/obstacles/river-bridge-human.png",
+    className: "obstacle--bridge",
+    alt: "Хрупкий мост: пройти может человек",
+    hint: "ЧЕЛОВЕК — ПО МОСТУ",
+    rule: "Хрупкий мост выдерживает только человека.",
+    mode: "ground",
+    form: "human",
+    indicatorForm: "human",
+    width: "clamp(520px, 48vw, 780px)",
+    bottom: "18.5dvh",
+    transform: "translate(-50%, 48%)",
+    zIndex: "4",
+    hintTop: "60vh"
   },
   {
-    id: "passage", src: "assets/cave/cave-narrow-passage-human.png", className: "obstacle--passage",
-    alt: "Узкий проход между камнями: пройти может человек", hint: "ЧЕЛОВЕК — ЧЕРЕЗ ПРОХОД",
-    rule: "В узкий проход проходит только человек.", mode: "ground", form: "human", indicatorForm: "human"
+    id: "passage",
+    src: "assets/cave/cave-narrow-passage-human.png",
+    className: "obstacle--passage",
+    alt: "Узкий проход между камнями: пройти может человек",
+    hint: "ЧЕЛОВЕК — ЧЕРЕЗ ПРОХОД",
+    rule: "В узкий проход проходит только человек.",
+    mode: "ground",
+    form: "human",
+    indicatorForm: "human",
+    width: "clamp(720px, 145vh, 1600px)",
+    bottom: "13.1dvh",
+    zIndex: "4",
+    hintTop: "31vh"
   },
   {
-    id: "rubble", src: "assets/cave/cave-rubble-bear.png", className: "obstacle--rubble",
-    alt: "Заваленные камни: перепрыгнуть можно только медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
-    rule: "Заваленные камни можно перепрыгнуть только медведем.", mode: "bear-jump", indicatorForm: "bear"
+    id: "rubble",
+    src: "assets/cave/cave-rubble-bear.png",
+    className: "obstacle--rubble",
+    alt: "Заваленные камни: перепрыгнуть можно только медведем",
+    hint: "МЕДВЕДЬ — ПРЫЖОК",
+    rule: "Заваленные камни можно перепрыгнуть только медведем.",
+    mode: "bear-jump",
+    indicatorForm: "bear",
+    width: "22.1vw",
+    bottom: "14.6dvh",
+    zIndex: "4",
+    hintTop: "35vh",
+    gapFactor: 0.47
+  },
+  {
+    id: "stump",
+    src: "assets/obstacles/stump-jump-both.png",
+    className: "obstacle--stump",
+    alt: "Пень: перепрыгивают оба облика",
+    hint: "ОБА ОБЛИКА — ПРЫЖОК",
+    rule: "Пень нужно перепрыгнуть в любом облике.",
+    mode: "any-jump",
+    indicatorForm: null,
+    width: "clamp(120px, 13vw, 210px)",
+    bottom: "17.6dvh",
+    zIndex: "4",
+    hintTop: "40vh",
+    gapFactor: 0.44
+  },
+  {
+    id: "crowd",
+    src: "assets/obstacles/crowd-human-pass.png",
+    className: "obstacle--crowd",
+    alt: "Толпа людей: пройти может только человек",
+    hint: "ЧЕЛОВЕК — ПРОЙТИ",
+    rule: "Через толпу людей проходит только человек.",
+    mode: "ground",
+    form: "human",
+    indicatorForm: "human",
+    width: "clamp(240px, 22vw, 360px)",
+    bottom: "15.8dvh",
+    zIndex: "4",
+    hintTop: "43vh"
   }
 ];
 
@@ -89,9 +173,17 @@ function shuffle(items) {
   return result;
 }
 
+function applyObstacleStyle(element, type) {
+  if (type.width) element.style.width = type.width;
+  if (type.bottom) element.style.bottom = type.bottom;
+  if (type.transform) element.style.transform = type.transform;
+  if (type.zIndex) element.style.zIndex = type.zIndex;
+}
+
 function placeObstacles() {
+  world.querySelectorAll(".obstacle, .obstacle-hint, .form-indicator-bush").forEach((element) => element.remove());
   obstacles = [];
-  // Два экземпляра каждого типа; перемешиваем так, чтобы одинаковые не стояли рядом.
+
   const types = obstacleTypes.flatMap((type) => [type, type]);
   let orderedTypes = [];
   for (let attempt = 0; attempt < 100; attempt++) {
@@ -103,13 +195,13 @@ function placeObstacles() {
   }
   if (!orderedTypes.length) orderedTypes = types;
 
-  // Раскладываем препятствия по лесу, горам и реке; начало и финал маршрута остаются свободными.
   const obstacleSceneCount = 7;
   const counts = Array(obstacleSceneCount).fill(Math.floor(orderedTypes.length / obstacleSceneCount));
   for (let i = 0; i < orderedTypes.length % obstacleSceneCount; i++) counts[i]++;
   const shuffledCounts = shuffle(counts);
   const plan = [];
   let typeIndex = 0;
+
   shuffledCounts.forEach((count, segment) => {
     for (let i = 0; i < count; i++) {
       const spacing = 1 / (count + 1);
@@ -121,24 +213,25 @@ function placeObstacles() {
 
   for (const item of plan) {
     const fraction = item.fraction ?? (0.22 + Math.random() * 0.56);
-    // Первый сегмент маршрута — берлога, поэтому препятствия начинаются со следующей сцены.
     const x = locationWidth * (1 + item.segment + fraction);
 
-    const indicator = document.createElement("img");
-    indicator.className = `form-indicator-bush form-indicator-bush--${item.type.indicatorForm}`;
-    indicator.src = indicatorBushes[item.type.indicatorForm];
-    indicator.alt = item.type.indicatorForm === "bear"
-      ? "Красный куст: дальше нужен медведь"
-      : "Синий куст: дальше нужен человек";
-    indicator.style.position = "absolute";
-    indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
-    indicator.style.bottom = "16.8dvh";
-    indicator.style.width = "clamp(120px, 12vw, 190px)";
-    indicator.style.height = "auto";
-    indicator.style.transform = "translateX(-50%)";
-    indicator.style.pointerEvents = "none";
-    indicator.style.zIndex = "6";
-    world.appendChild(indicator);
+    if (item.type.indicatorForm) {
+      const indicator = document.createElement("img");
+      indicator.className = `form-indicator-bush form-indicator-bush--${item.type.indicatorForm}`;
+      indicator.src = indicatorBushes[item.type.indicatorForm];
+      indicator.alt = item.type.indicatorForm === "bear"
+        ? "Красный куст: дальше нужен медведь"
+        : "Синий куст: дальше нужен человек";
+      indicator.style.position = "absolute";
+      indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
+      indicator.style.bottom = "16.8dvh";
+      indicator.style.width = "clamp(120px, 12vw, 200px)";
+      indicator.style.height = "auto";
+      indicator.style.transform = "translateX(-50%)";
+      indicator.style.pointerEvents = "none";
+      indicator.style.zIndex = "6";
+      world.appendChild(indicator);
+    }
 
     const img = document.createElement("img");
     img.className = `obstacle ${item.type.className}`;
@@ -146,6 +239,7 @@ function placeObstacles() {
     img.alt = item.type.alt;
     img.dataset.obstacle = item.type.id;
     img.style.left = `${x}px`;
+    applyObstacleStyle(img, item.type);
     world.appendChild(img);
 
     const hint = document.createElement("div");
@@ -153,9 +247,18 @@ function placeObstacles() {
     hint.textContent = item.type.hint;
     hint.title = item.type.rule;
     hint.style.left = `${x}px`;
+    if (item.type.hintTop) hint.style.top = item.type.hintTop;
     world.appendChild(hint);
 
-    obstacles.push({ ...item.type, x, element: img, hint, crossed: false, inside: false, attemptJump: null });
+    obstacles.push({
+      ...item.type,
+      x,
+      element: img,
+      hint,
+      crossed: false,
+      inside: false,
+      attemptJump: null
+    });
   }
 }
 placeObstacles();
@@ -164,9 +267,12 @@ function setForm(form) {
   hero.dataset.form = form;
   hero.classList.toggle("human", form === "human");
   hero.classList.toggle("bear", form === "bear");
-  heroImage.setAttribute("aria-label", form === "bear"
-    ? "Кудым-Ош в облике медведя"
-    : "Кудым-Ош в облике человека");
+  heroImage.setAttribute(
+    "aria-label",
+    form === "bear"
+      ? "Кудым-Ош в облике медведя"
+      : "Кудым-Ош в облике человека"
+  );
   updateHeroAnimation(performance.now());
 }
 
@@ -175,11 +281,13 @@ function setHeroSpriteFrame(form, action, frameIndex) {
   if (heroImage.dataset.frame === path) return;
   const image = spriteImageCache.get(path);
   heroImage.dataset.frame = path;
+
   const applyFrame = () => {
     if (heroImage.dataset.frame === path) {
       heroImage.style.backgroundImage = `url("${path}")`;
     }
   };
+
   if (image?.complete && image.naturalWidth > 0) applyFrame();
   else if (image && typeof image.decode === "function") image.decode().then(applyFrame).catch(() => {});
 }
@@ -190,7 +298,6 @@ function updateHeroAnimation(now) {
   const form = hero.dataset.form;
   if (jump && hero.classList.contains("jumping")) {
     const progress = Math.max(0, Math.min((now - jump.takeoffAt) / (jump.duration * 1000), 1));
-    // Кадр приседания держится 50 мс на земле; при отрыве сразу видны вытянутые руки.
     const frameIndex = now < jump.takeoffAt
       ? 0
       : progress < 0.16 ? 1 : progress < 0.44 ? 2 : 3;
@@ -207,7 +314,6 @@ function updateHeroAnimation(now) {
 function toggleHeroForm() {
   if (!gameStarted || !running) return;
   setForm(hero.dataset.form === "human" ? "bear" : "human");
-  // Физика текущего прыжка остаётся такой, какой была при отталкивании.
 }
 
 function startJump() {
@@ -216,7 +322,6 @@ function startJump() {
   jump = {
     takeoffAt: performance.now() + jumpPreparationMs,
     form,
-    // В облике медведя прыжок выше и дольше, значит и горизонтальный пролёт длиннее.
     duration: (form === "bear" ? 1.12 : 0.55) / Number(speedSlider.value),
     height: innerHeight * (form === "bear" ? 0.38 : 0.16)
   };
@@ -235,19 +340,22 @@ function resetRun() {
   hero.classList.remove("jumping", "falling", "falling-human", "falling-bear");
   hero.classList.add("running");
   hero.style.transform = "";
-  obstacles.forEach((obstacle) => { obstacle.crossed = false; obstacle.inside = false; obstacle.attemptJump = null; });
+  obstacles.forEach((obstacle) => {
+    obstacle.crossed = false;
+    obstacle.inside = false;
+    obstacle.attemptJump = null;
+  });
 }
 
 function failRun() {
   if (!running) return;
   running = false;
-  const failedForm = hero.dataset.form;
   jump = null;
   wading = null;
   hero.classList.remove("wading");
   hero.style.transform = "";
   hero.classList.remove("running", "jumping");
-  hero.classList.add("falling", `falling-${failedForm}`);
+  hero.classList.add("falling");
   window.setTimeout(resetRun, 520);
 }
 
@@ -263,14 +371,17 @@ game.addEventListener("pointerdown", (event) => {
   if (event.button === 0) startJump();
   else if (event.button === 2) toggleHeroForm();
 });
+
 game.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 });
+
 game.addEventListener("touchstart", (event) => {
   if (event.target.closest("#speed-control, #start-screen")) return;
   event.preventDefault();
   toggleHeroForm();
 }, { passive: false });
+
 window.addEventListener("keydown", (event) => {
   if (!gameStarted) return;
   if (event.code === "Space" || event.code === "ArrowUp") {
@@ -294,6 +405,7 @@ function jumpDistanceAtBoundary(activeJump, now, speed, center, boundary) {
 
 function updateObstacleCollisions(previousCenter, center, now, speed, landedJump = null) {
   const airborneJump = jump && now >= jump.takeoffAt ? jump : null;
+
   for (const obstacle of obstacles) {
     if (obstacle.crossed) continue;
 
@@ -327,11 +439,11 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       continue;
     }
 
-    if (obstacle.mode === "ravine" || obstacle.mode === "bear-jump") {
-      // У оврага проверяем открытый провал, у завала — почти всю ширину камней.
-      const halfGap = obstacle.element.offsetWidth * (obstacle.mode === "ravine" ? 0.15 : 0.47);
+    if (["ravine", "bear-jump", "any-jump"].includes(obstacle.mode)) {
+      const halfGap = obstacle.element.offsetWidth * (obstacle.gapFactor ?? 0.4);
       const gapStart = obstacle.x - halfGap;
       const gapEnd = obstacle.x + halfGap;
+
       if (!obstacle.inside && previousCenter < gapStart && center >= gapStart) {
         obstacle.inside = true;
         const enteringJump = airborneJump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, gapStart) > 0 ? landedJump : null);
@@ -341,19 +453,20 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
         }
         obstacle.attemptJump = enteringJump;
       }
-      if (obstacle.inside) {
-        if (landedJump === obstacle.attemptJump) {
-          const cleared = center >= gapEnd
-            && obstacle.attemptJump?.form === "bear"
-            && hero.dataset.form === "bear";
-          if (!cleared) {
-            failRun();
-            return true;
-          }
-          obstacle.inside = false;
-          obstacle.crossed = true;
-          obstacle.attemptJump = null;
+
+      if (obstacle.inside && landedJump === obstacle.attemptJump) {
+        const jumpMatches = obstacle.mode === "any-jump"
+          ? obstacle.attemptJump && hero.dataset.form === obstacle.attemptJump.form
+          : obstacle.attemptJump?.form === "bear" && hero.dataset.form === "bear";
+
+        const cleared = center >= gapEnd && jumpMatches;
+        if (!cleared) {
+          failRun();
+          return true;
         }
+        obstacle.inside = false;
+        obstacle.crossed = true;
+        obstacle.attemptJump = null;
       }
       continue;
     }
@@ -368,6 +481,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       }
     }
   }
+
   return false;
 }
 
@@ -400,6 +514,7 @@ function gameLoop(now) {
         hero.style.transform = "";
       }
     }
+
     updateHeroAnimation(now);
 
     const center = worldX + heroScreenX();
@@ -407,8 +522,10 @@ function gameLoop(now) {
       requestAnimationFrame(gameLoop);
       return;
     }
+
     if (worldX >= maxScroll) running = false;
   }
+
   requestAnimationFrame(gameLoop);
 }
 
