@@ -4,6 +4,8 @@ const hero = document.getElementById("hero");
 const heroImage = document.getElementById("hero-image");
 const speedSlider = document.getElementById("speed-slider");
 const speedValue = document.getElementById("speed-value");
+const startScreen = document.getElementById("start-screen");
+const startButton = document.getElementById("start-button");
 const jumpPreparationMs = 50;
 const spriteFrames = {
   human: {
@@ -72,7 +74,8 @@ const indicatorBushes = {
 
 let obstacles = [];
 let worldX = 0;
-let running = true;
+let gameStarted = false;
+let running = false;
 let jump = null;
 let wading = null;
 let lastFrameAt = 0;
@@ -202,13 +205,13 @@ function updateHeroAnimation(now) {
 }
 
 function toggleHeroForm() {
-  if (!running) return;
+  if (!gameStarted || !running) return;
   setForm(hero.dataset.form === "human" ? "bear" : "human");
   // Физика текущего прыжка остаётся такой, какой была при отталкивании.
 }
 
 function startJump() {
-  if (jump || !running) return;
+  if (!gameStarted || jump || !running) return;
   const form = hero.dataset.form;
   jump = {
     takeoffAt: performance.now() + jumpPreparationMs,
@@ -222,7 +225,7 @@ function startJump() {
 }
 
 function resetRun() {
-  running = true;
+  running = gameStarted;
   worldX = 0;
   world.style.transform = "translate3d(0, 0, 0)";
   setForm("human");
@@ -248,8 +251,15 @@ function failRun() {
   window.setTimeout(resetRun, 520);
 }
 
+startButton.addEventListener("click", () => {
+  gameStarted = true;
+  startScreen.classList.add("is-hidden");
+  resetRun();
+  lastFrameAt = performance.now();
+});
+
 game.addEventListener("pointerdown", (event) => {
-  if (event.pointerType !== "mouse" || event.target.closest("#speed-control")) return;
+  if (event.pointerType !== "mouse" || event.target.closest("#speed-control, #start-screen")) return;
   if (event.button === 0) startJump();
   else if (event.button === 2) toggleHeroForm();
 });
@@ -257,11 +267,12 @@ game.addEventListener("contextmenu", (event) => {
   event.preventDefault();
 });
 game.addEventListener("touchstart", (event) => {
-  if (event.target.closest("#speed-control")) return;
+  if (event.target.closest("#speed-control, #start-screen")) return;
   event.preventDefault();
   toggleHeroForm();
 }, { passive: false });
 window.addEventListener("keydown", (event) => {
+  if (!gameStarted) return;
   if (event.code === "Space" || event.code === "ArrowUp") {
     event.preventDefault();
     startJump();
