@@ -4,6 +4,16 @@ const hero = document.getElementById("hero");
 const heroImage = document.getElementById("hero-image");
 const speedSlider = document.getElementById("speed-slider");
 const speedValue = document.getElementById("speed-value");
+const spriteFrames = {
+  human: {
+    run: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-run-${frame}.png`),
+    jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-jump-${frame}.png`)
+  },
+  bear: {
+    run: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-run-${frame}.png`),
+    jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-jump-${frame}.png`)
+  }
+};
 
 const css = getComputedStyle(document.documentElement);
 const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * innerHeight / 100;
@@ -123,6 +133,30 @@ function setForm(form) {
   heroImage.setAttribute("aria-label", form === "bear"
     ? "Кудым-Ош в облике медведя"
     : "Кудым-Ош в облике человека");
+  updateHeroAnimation(performance.now());
+}
+
+function setHeroSpriteFrame(form, action, frameIndex) {
+  const path = spriteFrames[form][action][frameIndex];
+  if (heroImage.dataset.frame === path) return;
+  heroImage.style.backgroundImage = `url("${path}")`;
+  heroImage.dataset.frame = path;
+}
+
+function updateHeroAnimation(now) {
+  if (hero.classList.contains("falling")) return;
+
+  const form = hero.dataset.form;
+  if (jump && hero.classList.contains("jumping")) {
+    const progress = Math.min((now - jump.startedAt) / (jump.duration * 1000), 1);
+    const frameIndex = progress < 0.4 ? 0 : progress < 0.52 ? 1 : progress < 0.64 ? 2 : 3;
+    setHeroSpriteFrame(form, "jump", frameIndex);
+    return;
+  }
+
+  const cycleDuration = form === "bear" ? 580 : 420;
+  const frameIndex = Math.floor(now / (cycleDuration / 4)) % 4;
+  setHeroSpriteFrame(form, "run", frameIndex);
 }
 
 function toggleHeroForm() {
@@ -141,7 +175,6 @@ function startJump() {
     duration: (form === "bear" ? 1.12 : 0.55) / Number(speedSlider.value),
     height: innerHeight * (form === "bear" ? 0.38 : 0.16)
   };
-  hero.style.setProperty("--jump-cycle-duration", `${jump.duration}s`);
   hero.classList.remove("running");
   hero.classList.add("jumping");
 }
@@ -157,7 +190,6 @@ function resetRun() {
   hero.classList.remove("jumping", "falling", "falling-human", "falling-bear");
   hero.classList.add("running");
   hero.style.transform = "";
-  hero.style.removeProperty("--jump-cycle-duration");
   obstacles.forEach((obstacle) => { obstacle.crossed = false; obstacle.inside = false; obstacle.attemptJump = null; });
 }
 
@@ -364,9 +396,9 @@ function gameLoop(now) {
         hero.classList.remove("jumping");
         hero.classList.add("running");
         hero.style.transform = "";
-        hero.style.removeProperty("--jump-cycle-duration");
       }
     }
+    updateHeroAnimation(now);
 
     const center = worldX + heroScreenX();
     if (updateObstacleCollisions(previousCenter, center, now, pixelsPerSecond, landedJump)) {

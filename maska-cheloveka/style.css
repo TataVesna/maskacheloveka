@@ -169,39 +169,17 @@ body {
   width: 100%;
   aspect-ratio: 0.72;
   background-repeat: no-repeat;
-  background-size: 400% 200%;
-  background-position: 0% 0%;
+  background-size: 100% 100%;
+  background-position: center;
   transform-origin: 50% 100%;
 }
 
-/* В листе 4 кадра бега в верхнем ряду и 4 кадра прыжка в нижнем. */
+/* Первый кадр показывается до первого обновления анимации из game.js. */
 #hero.human #hero-image {
-  background-image: url("assets/characters/human-actions-sheet.png");
+  background-image: url("assets/characters/frames/human-run-1.png");
 }
 #hero.bear #hero-image {
-  background-image: url("assets/characters/bear-actions-sheet.png");
-}
-#hero.running.human #hero-image {
-  animation: runFrames 0.42s steps(3, end) infinite;
-}
-#hero.running.bear #hero-image {
-  animation: runFrames 0.58s steps(3, end) infinite;
-}
-@keyframes runFrames {
-  from { background-position: 0% 0%; }
-  to { background-position: 100% 0%; }
-}
-
-#hero.jumping #hero-image {
-  animation: jumpFrames var(--jump-cycle-duration, 0.8s) forwards;
-}
-@keyframes jumpFrames {
-  0% { background-position: 0% 100%; animation-timing-function: steps(1, end); }
-  18% { background-position: 0% 100%; animation-timing-function: steps(1, end); }
-  40% { background-position: 33.333% 100%; animation-timing-function: steps(1, end); }
-  52% { background-position: 66.667% 100%; animation-timing-function: steps(1, end); }
-  64% { background-position: 100% 100%; animation-timing-function: steps(1, end); }
-  100% { background-position: 100% 100%; }
+  background-image: url("assets/characters/frames/bear-run-1.png");
 }
 
 /* При ошибке герой падает, затем JS возвращает его к началу маршрута. */
@@ -212,14 +190,14 @@ body {
   animation: fallBear 0.5s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
 }
 @keyframes fallHuman {
-  0% { background-position: 100% 100%; transform: rotate(0) translateY(0) scale(1); }
-  28% { background-position: 100% 100%; transform: rotate(-12deg) translateY(12px) scale(1.04, 0.96); }
-  100% { background-position: 100% 100%; transform: rotate(78deg) translateY(58px) scale(0.88, 0.92); }
+  0% { transform: rotate(0) translateY(0) scale(1); }
+  28% { transform: rotate(-12deg) translateY(12px) scale(1.04, 0.96); }
+  100% { transform: rotate(78deg) translateY(58px) scale(0.88, 0.92); }
 }
 @keyframes fallBear {
-  0% { background-position: 100% 100%; transform: rotate(0) translateY(0) scale(1); }
-  25% { background-position: 100% 100%; transform: rotate(-8deg) translateY(10px) scale(1.04, 0.95); }
-  100% { background-position: 100% 100%; transform: rotate(66deg) translateY(52px) scale(0.9, 0.9); }
+  0% { transform: rotate(0) translateY(0) scale(1); }
+  25% { transform: rotate(-8deg) translateY(10px) scale(1.04, 0.95); }
+  100% { transform: rotate(66deg) translateY(52px) scale(0.9, 0.9); }
 }
 
 /* человек */
