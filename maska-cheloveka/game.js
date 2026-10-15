@@ -51,6 +51,7 @@ const obstacleTypes = [
     rule: "Для оврага нужен прыжок медведем.",
     mode: "ravine",
     indicatorForm: "bear",
+    groundAnchor: "top",
     width: "63vw",
     zIndex: "4",
     hintTop: "61vh",
@@ -66,6 +67,7 @@ const obstacleTypes = [
     mode: "ground",
     form: "bear",
     indicatorForm: "bear",
+    groundAnchor: "top",
     width: "clamp(460px, 55vw, 860px)",
     zIndex: "4",
     hintTop: "68vh"
@@ -80,6 +82,7 @@ const obstacleTypes = [
     mode: "ground",
     form: "human",
     indicatorForm: "human",
+    groundAnchor: "top",
     width: "clamp(520px, 48vw, 780px)",
     zIndex: "4",
     hintTop: "60vh"
@@ -94,6 +97,7 @@ const obstacleTypes = [
     mode: "ground",
     form: "human",
     indicatorForm: "human",
+    groundAnchor: "center",
     width: "clamp(720px, 145vh, 1600px)",
     zIndex: "4",
     hintTop: "31vh"
@@ -107,6 +111,7 @@ const obstacleTypes = [
     rule: "Заваленные камни можно перепрыгнуть только медведем.",
     mode: "bear-jump",
     indicatorForm: "bear",
+    groundAnchor: "center",
     width: "22.1vw",
     zIndex: "4",
     hintTop: "35vh",
@@ -121,6 +126,7 @@ const obstacleTypes = [
     rule: "Пень нужно перепрыгнуть в любом облике.",
     mode: "any-jump",
     indicatorForm: null,
+    groundAnchor: "center",
     width: "clamp(120px, 13vw, 210px)",
     zIndex: "4",
     hintTop: "40vh",
@@ -136,6 +142,7 @@ const obstacleTypes = [
     mode: "ground",
     form: "human",
     indicatorForm: "human",
+    groundAnchor: "center",
     width: "clamp(240px, 22vw, 360px)",
     zIndex: "4",
     hintTop: "43vh"
@@ -169,59 +176,18 @@ function shuffle(items) {
 
 function applyObstacleStyle(element, type) {
   if (type.width) element.style.width = type.width;
-  element.style.bottom = "var(--run-line-bottom)";
-  element.style.transform = "translateX(-50%)";
-  if (type.zIndex) element.style.zIndex = type.zIndex;
-}
 
-function alignObstacleVisibleBottom(element) {
-  const align = () => {
-    if (!element.naturalWidth || !element.naturalHeight || !element.isConnected) return;
-
-    try {
-      const maxSampleSize = 320;
-      const sampleScale = Math.min(
-        1,
-        maxSampleSize / element.naturalWidth,
-        maxSampleSize / element.naturalHeight
-      );
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(element.naturalWidth * sampleScale));
-      canvas.height = Math.max(1, Math.round(element.naturalHeight * sampleScale));
-      const context = canvas.getContext("2d", { willReadFrequently: true });
-      if (!context) return;
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(element, 0, 0, canvas.width, canvas.height);
-      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-
-      let lastVisibleRow = -1;
-      rowSearch:
-      for (let y = canvas.height - 1; y >= 0; y--) {
-        for (let x = 0; x < canvas.width; x++) {
-          if (pixels[(y * canvas.width + x) * 4 + 3] > 12) {
-            lastVisibleRow = y;
-            break rowSearch;
-          }
-        }
-      }
-
-      if (lastVisibleRow < 0) return;
-
-      const transparentRowsBelow = canvas.height - 1 - lastVisibleRow;
-      const renderedHeight = element.getBoundingClientRect().height;
-      const downwardShift = renderedHeight * (transparentRowsBelow / canvas.height);
-      element.style.transform = `translate(-50%, ${downwardShift}px)`;
-    } catch (error) {
-      element.style.transform = "translateX(-50%)";
-    }
-  };
-
-  if (element.complete && element.naturalWidth) {
-    requestAnimationFrame(align);
+  if (type.groundAnchor === "top") {
+    element.style.top = "calc(100% - var(--run-line-bottom))";
+    element.style.bottom = "auto";
+    element.style.transform = "translateX(-50%)";
   } else {
-    element.addEventListener("load", () => requestAnimationFrame(align), { once: true });
+    element.style.top = "50%";
+    element.style.bottom = "auto";
+    element.style.transform = "translate(-50%, -50%)";
   }
+
+  if (type.zIndex) element.style.zIndex = type.zIndex;
 }
 
 function placeObstacles() {
@@ -285,7 +251,6 @@ function placeObstacles() {
     img.style.left = `${x}px`;
     applyObstacleStyle(img, item.type);
     world.appendChild(img);
-    alignObstacleVisibleBottom(img);
 
     const hint = document.createElement("div");
     hint.className = `obstacle-hint obstacle-hint--${item.type.id}`;
