@@ -12,11 +12,11 @@
 
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Все игровые препятствия и кусты опираются на нижнюю границу экрана. */
+    /* Препятствия, кусты и персонаж стоят на одной линии. */
     #world .obstacle,
     #world .form-indicator-bush {
       top: auto !important;
-      bottom: 0 !important;
+      bottom: calc(var(--run-line-bottom) - 12px) !important;
       transform: translateX(-50%) !important;
     }
   </style>
