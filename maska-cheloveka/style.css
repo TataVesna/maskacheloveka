@@ -158,7 +158,7 @@ body {
 #hero {
   position: absolute;
   left: 18vw;
-  bottom: 7.4vh;
+  bottom: calc(7.4vh + 17px);
   z-index: 10;
 
   transition: width 0.15s ease;
