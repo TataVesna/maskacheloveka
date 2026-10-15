@@ -8,6 +8,8 @@
   const WITCH_BASE_WIDTH = 138;
   const OBSTACLE_VERTICAL_OFFSET = 35;
   const BUSH_VERTICAL_OFFSET = 35;
+  const CROWD_VERTICAL_LIFT = 5;
+  const WITCH_VERTICAL_LIFT = 5;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
 
@@ -102,7 +104,8 @@
       setScaledImageWidth(obstacle.element);
 
       const baseBottom = obstacle.id === 'crowd' ? 40 : 30;
-      const loweredBottom = (baseBottom - OBSTACLE_VERTICAL_OFFSET) * sceneScale;
+      const lift = obstacle.id === 'crowd' ? CROWD_VERTICAL_LIFT : 0;
+      const loweredBottom = (baseBottom - OBSTACLE_VERTICAL_OFFSET + lift) * sceneScale;
       obstacle.element.style.setProperty('bottom', `${loweredBottom}px`, 'important');
     });
 
@@ -115,13 +118,17 @@
       indicator.style.setProperty('bottom', `${loweredBushBottom}px`, 'important');
     });
 
-    /* Ведьма стоит на той же линии земли, что и бегущий персонаж. */
+    /* Ведьма стоит на линии бега и дополнительно поднята на 5 px. */
     const witch = document.getElementById('witch-midpoint');
     if (witch) {
       const logicalX = Number(witch.dataset.logicalX);
       if (Number.isFinite(logicalX)) witch.style.left = `${logicalX * newLocationWidth}px`;
       witch.style.setProperty('width', `${WITCH_BASE_WIDTH * sceneScale}px`, 'important');
-      witch.style.setProperty('bottom', `calc(var(--run-line-bottom) - ${12 * sceneScale}px)`, 'important');
+      witch.style.setProperty(
+        'bottom',
+        `calc(var(--run-line-bottom) - ${(12 - WITCH_VERTICAL_LIFT) * sceneScale}px)`,
+        'important'
+      );
     }
 
     /* При изменении размеров iframe/окна сохраняем ту же точку маршрута. */
