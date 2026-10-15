@@ -1,6 +1,7 @@
 /* Финальная сцена в чуме невесты.
    При входе на последний экран герой плавно замедляется,
-   затем поверх игры появляется финальная иллюстрация. */
+   затем поверх игры появляется финальная иллюстрация.
+   По клику/тапу на глаза открывается экран результата. */
 (() => {
   const LOCATION_ASPECT = 3000 / 1080;
   const FINAL_SCENE_INDEX = 10; // bride-chum — 11-й экран, индекс 10
@@ -10,6 +11,7 @@
   const REVEAL_DURATION = 1200;
 
   let triggered = false;
+  let finalImageReady = false;
   window.finalSequenceActive = false;
 
   const overlay = document.createElement("div");
@@ -25,11 +27,12 @@
     opacity: "0",
     visibility: "hidden",
     pointerEvents: "none",
+    cursor: "pointer",
     transition: `opacity ${REVEAL_DURATION}ms ease, visibility ${REVEAL_DURATION}ms ease`
   });
 
   const image = document.createElement("img");
-  image.src = "assets/ПЗ_Фин_Иллюстрация.png";
+  image.src = "assets/UI/ПЗ_Фин_Иллюстрация.png";
   image.alt = "Финальная иллюстрация — глаза невесты";
   Object.assign(image.style, {
     width: "100%",
@@ -39,6 +42,8 @@
     transform: "scale(1.035)",
     filter: "blur(9px)",
     opacity: "0",
+    userSelect: "none",
+    webkitUserDrag: "none",
     transition: `transform ${REVEAL_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1), filter ${REVEAL_DURATION}ms ease, opacity ${REVEAL_DURATION}ms ease`
   });
 
@@ -51,6 +56,9 @@
 
   function revealFinalImage() {
     overlay.style.visibility = "visible";
+    overlay.style.pointerEvents = "auto";
+    finalImageReady = true;
+
     requestAnimationFrame(() => {
       overlay.style.opacity = "1";
       image.style.opacity = "1";
@@ -58,6 +66,23 @@
       image.style.filter = "blur(0px)";
     });
   }
+
+  function showWinScreen(event) {
+    if (!finalImageReady) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    running = false;
+    jump = null;
+    wading = null;
+    overlay.style.pointerEvents = "none";
+    overlay.style.opacity = "0";
+    overlay.style.visibility = "hidden";
+
+    window.showResultScreen?.("win");
+  }
+
+  overlay.addEventListener("pointerdown", showWinScreen);
 
   function startFinalScene() {
     if (triggered) return;
