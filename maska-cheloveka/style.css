@@ -63,6 +63,81 @@ body {
   user-select: none;
 }
 
+/* ===== СТАРТОВЫЙ ЭКРАН ===== */
+
+#start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 72px);
+  background:
+    linear-gradient(90deg, rgba(15, 12, 10, 0.78), rgba(15, 12, 10, 0.42) 55%, rgba(15, 12, 10, 0.62)),
+    url("assets/locations/den.png") center / cover no-repeat;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+#start-screen.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.start-screen__panel {
+  width: min(760px, 78vw);
+  padding: clamp(28px, 4vw, 56px);
+  border: 1px solid rgba(244, 231, 204, 0.45);
+  background: rgba(25, 20, 16, 0.66);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #f5ead5;
+  text-align: center;
+}
+
+.start-screen__eyebrow {
+  margin-bottom: 14px;
+  font: 600 clamp(11px, 1.15vw, 16px)/1.2 Arial, sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+#start-title {
+  font: 700 clamp(44px, 7vw, 108px)/0.95 Georgia, "Times New Roman", serif;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.start-screen__subtitle {
+  width: min(600px, 100%);
+  margin: 22px auto 30px;
+  font: 400 clamp(16px, 1.65vw, 24px)/1.4 Arial, sans-serif;
+  color: #eadcc1;
+}
+
+#start-button {
+  min-width: 180px;
+  padding: 14px 28px;
+  border: 1px solid #f0dfbd;
+  background: #ead9b8;
+  color: #201811;
+  font: 700 clamp(15px, 1.25vw, 18px)/1 Arial, sans-serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+#start-button:hover {
+  transform: translateY(-2px);
+  background: #f3e6cc;
+}
+
+#start-button:active {
+  transform: translateY(0);
+}
+
 .obstacle {
   position: absolute;
   z-index: 3;
@@ -191,10 +266,10 @@ body {
 
 /* Первый кадр показывается до первого обновления анимации из game.js. */
 #hero.human #hero-image {
-  background-image: url("assets/characters/frames/human-run-1.png");
+  background-image: url("assets/characters/human-1.png");
 }
 #hero.bear #hero-image {
-  background-image: url("assets/characters/frames/bear-run-1.png");
+  background-image: url("assets/characters/bear-1.png");
 }
 
 /* При ошибке герой падает, затем JS возвращает его к началу маршрута. */
