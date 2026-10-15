@@ -12,6 +12,14 @@
     .filter((obstacle) => !caveObstacleIds.has(obstacle.id))
     .sort((a, b) => a.x - b.x);
 
+  /* Пень должен уверенно перепрыгиваться в обоих обликах.
+     Визуальный размер не меняем — уменьшаем только игровую ширину зоны прыжка. */
+  regularObstacles
+    .filter((obstacle) => obstacle.id === "stump")
+    .forEach((obstacle) => {
+      obstacle.gapFactor = 0.28;
+    });
+
   /* segment считается после берлоги:
      0..2 — тайга,
      3..5 — три экрана пещеры,
