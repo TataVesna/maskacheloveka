@@ -6,7 +6,7 @@
   const FINAL_SCENE_INDEX = 10; // bride-chum — 11-й экран, индекс 10
   const TRIGGER_FRACTION = 0.04;
   const SLOWDOWN_DURATION = 1400;
-  const REVEAL_DELAY = 350;
+  const REVEAL_DELAY = 700;
   const REVEAL_DURATION = 1200;
 
   let triggered = false;
