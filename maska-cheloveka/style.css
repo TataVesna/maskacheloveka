@@ -213,9 +213,9 @@ body {
   height: auto;
 }
 
-/* Толпа развёрнута в противоположную сторону без изменения логики коллизии. */
+/* Толпа развёрнута в противоположную сторону без вертикального смещения. */
 .obstacle--crowd {
-  transform: translate(-50%, -50%) scaleX(-1) !important;
+  transform: translateX(-50%) scaleX(-1) !important;
 }
 
 .obstacle-hint {
