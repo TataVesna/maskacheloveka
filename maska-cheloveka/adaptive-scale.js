@@ -6,6 +6,7 @@
   const LOCATION_ASPECT = 3000 / 1080;
   const HERO_BASE_WIDTH = { human: 114, bear: 162 };
   const WITCH_BASE_WIDTH = 138;
+  const OBSTACLE_VERTICAL_OFFSET = 35;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
 
@@ -74,7 +75,8 @@
       setScaledImageWidth(obstacle.element);
 
       const baseBottom = obstacle.id === 'crowd' ? 40 : 30;
-      obstacle.element.style.setProperty('bottom', `${baseBottom * sceneScale}px`, 'important');
+      const loweredBottom = (baseBottom - OBSTACLE_VERTICAL_OFFSET) * sceneScale;
+      obstacle.element.style.setProperty('bottom', `${loweredBottom}px`, 'important');
     });
 
     /* Цветные кусты получают тот же коэффициент и сохраняют позицию
