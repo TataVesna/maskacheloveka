@@ -1,4 +1,5 @@
-/* Во время брода медведь может прыгать; человек всегда проигрывает. */
+/* Во время брода медведь может прыгать; человек всегда проигрывает.
+   Для препятствий с требуемым обликом прыжок сам по себе больше не считается ошибкой. */
 updateObstacleCollisions = function (previousCenter, center, now, speed, landedJump = null) {
   const airborneJump = jump && now >= jump.takeoffAt ? jump : null;
 
@@ -12,8 +13,7 @@ updateObstacleCollisions = function (previousCenter, center, now, speed, landedJ
 
     if (obstacle.mode === "cave-wall") {
       if (previousCenter < obstacle.x && center >= obstacle.x) {
-        const isGrounded = !airborneJump;
-        if (hero.dataset.form !== "bear" || !isGrounded) {
+        if (hero.dataset.form !== "bear") {
           failRun();
           return true;
         }
@@ -95,8 +95,7 @@ updateObstacleCollisions = function (previousCenter, center, now, speed, landedJ
     if (previousCenter < obstacle.x && center >= obstacle.x) {
       obstacle.crossed = true;
       const requiredForm = obstacle.form;
-      const isGrounded = !airborneJump;
-      if (hero.dataset.form !== requiredForm || !isGrounded) {
+      if (hero.dataset.form !== requiredForm) {
         failRun();
         return true;
       }
