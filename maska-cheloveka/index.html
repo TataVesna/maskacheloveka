@@ -16,12 +16,13 @@
     #world .obstacle,
     #world .form-indicator-bush {
       top: auto !important;
-      bottom: 25px !important;
+      bottom: 30px !important;
       transform: translateX(-50%) !important;
     }
 
-    /* Толпа немного уменьшена, нижняя точка остаётся на общей линии. */
+    /* Толпа немного уменьшена и поднята выше остальных препятствий. */
     #world .obstacle--crowd {
+      bottom: 40px !important;
       transform: translateX(-50%) scale(0.9) !important;
       transform-origin: 50% 100%;
     }
