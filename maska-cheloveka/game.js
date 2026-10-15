@@ -88,36 +88,6 @@ const obstacleTypes = [
     hintTop: "60vh"
   },
   {
-    id: "passage",
-    src: "assets/cave/cave-narrow-passage-human.png",
-    className: "obstacle--passage",
-    alt: "Узкий проход между камнями: пройти может человек",
-    hint: "ЧЕЛОВЕК — ЧЕРЕЗ ПРОХОД",
-    rule: "В узкий проход проходит только человек.",
-    mode: "ground",
-    form: "human",
-    indicatorForm: "human",
-    groundAnchor: "center",
-    width: "clamp(720px, 145vh, 1600px)",
-    zIndex: "4",
-    hintTop: "31vh"
-  },
-  {
-    id: "rubble",
-    src: "assets/cave/cave-rubble-bear.png",
-    className: "obstacle--rubble",
-    alt: "Заваленные камни: перепрыгнуть можно только медведем",
-    hint: "МЕДВЕДЬ — ПРЫЖОК",
-    rule: "Заваленные камни можно перепрыгнуть только медведем.",
-    mode: "bear-jump",
-    indicatorForm: "bear",
-    groundAnchor: "center",
-    width: "22.1vw",
-    zIndex: "4",
-    hintTop: "35vh",
-    gapFactor: 0.47
-  },
-  {
     id: "stump",
     src: "assets/obstacles/stump-jump-both.png",
     className: "obstacle--stump",
@@ -235,7 +205,6 @@ function placeObstacles() {
       indicator.style.position = "absolute";
       indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
       indicator.style.bottom = "var(--run-line-bottom)";
-      indicator.style.width = "clamp(120px, 12vw, 200px)";
       indicator.style.height = "auto";
       indicator.style.transform = "translateX(-50%)";
       indicator.style.pointerEvents = "none";
