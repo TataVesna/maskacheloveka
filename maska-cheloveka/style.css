@@ -1,0 +1,260 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Панорамы локаций имеют размер 3000 × 1080 и масштабируются по высоте окна. */
+  --location-width: 277.7778vh;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  touch-action: none;
+}
+
+#game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000000;
+}
+
+#world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  width: max-content;
+  height: 100vh;
+  background: #fff;
+  will-change: transform;
+}
+
+.location-scene {
+  position: relative;
+  flex: 0 0 var(--location-width);
+  width: var(--location-width);
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.location-scene img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.obstacle {
+  position: absolute;
+  z-index: 3;
+  bottom: 7.4vh;
+  height: auto;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* Размеры привязаны к высоте героя и к геометрии каждого наброска. */
+.obstacle--ravine {
+  /* Открытый провал занимает ~30% рисунка: около 82% прыжка медведя. */
+  width: 63vw;
+  transform: translate(-50%, 60%); /* опускаем кромки ближе к линии бега */
+  z-index: 4;
+}
+.obstacle--tree,
+.obstacle--passage {
+  width: clamp(720px, 145vh, 1600px); /* просвет под препятствием должен быть выше человека */
+}
+.obstacle--river {
+  width: clamp(460px, 55vw, 860px);
+  transform: translate(-50%, 68%); /* берега на линии бега, русло ниже */
+  z-index: 4;
+}
+.obstacle--rubble {
+  /* Рисунок целиком чуть короче прыжка медведя: 22.1vw против 23.52vw. */
+  width: 22.1vw;
+  z-index: 4;
+}
+.obstacle--bush {
+  /* Человек прыгает на 11.55vw; куст занимает около 90% этой дистанции. */
+  width: 10.4vw;
+  z-index: 4;
+}
+.obstacle--bridge {
+  width: clamp(520px, 48vw, 780px);
+  transform: translate(-50%, 48%); /* настил совмещён с линией бега */
+  z-index: 4;
+}
+
+.obstacle-hint {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  max-width: clamp(150px, 18vw, 230px);
+  padding: 7px 10px;
+  transform: translateX(-50%);
+  border: 2px solid #171717;
+  border-radius: 4px;
+  color: #111;
+  background: #fffF;
+  font: 700 clamp(11px, 1vw, 15px)/1.15 Arial, sans-serif;
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+}
+.obstacle-hint::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 6px);
+  bottom: -8px;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-right: 2px solid #171717;
+  border-bottom: 2px solid #171717;
+  background: #fff;
+}
+.obstacle-hint--tree,
+.obstacle-hint--passage { top: 31vh; }
+.obstacle-hint--ravine { top: 61vh; }
+.obstacle-hint--river { top: 68vh; }
+.obstacle-hint--bridge { top: 60vh; }
+.obstacle-hint--rubble { top: 35vh; }
+.obstacle-hint--bush {
+  top: 36vh;
+  max-width: clamp(210px, 24vw, 300px);
+}
+
+#speed-control {
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  right: 14px;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2px 10px;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #222;
+  background: #ffffffd9;
+  font: 12px Arial, sans-serif;
+}
+#speed-slider { grid-column: 1 / -1; width: 140px; }
+
+/* ===== ГЕРОЙ ===== */
+
+#hero {
+  position: absolute;
+  left: 18vw;
+  bottom: 7.4vh;
+  z-index: 10;
+
+  transition: width 0.15s ease;
+}
+
+#hero-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 0.72;
+  background-repeat: no-repeat;
+  background-size: 400% 200%;
+  background-position: 0% 0%;
+  transform-origin: 50% 100%;
+}
+
+/* В листе 4 кадра бега в верхнем ряду и 4 кадра прыжка в нижнем. */
+#hero.human #hero-image {
+  background-image: url("assets/characters/human-actions-sheet.png");
+}
+#hero.bear #hero-image {
+  background-image: url("assets/characters/bear-actions-sheet.png");
+}
+#hero.running.human #hero-image {
+  animation: runFrames 0.42s steps(3, end) infinite;
+}
+#hero.running.bear #hero-image {
+  animation: runFrames 0.58s steps(3, end) infinite;
+}
+@keyframes runFrames {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 0%; }
+}
+
+#hero.jumping #hero-image {
+  animation: jumpFrames var(--jump-cycle-duration, 0.8s) forwards;
+}
+@keyframes jumpFrames {
+  0% { background-position: 0% 100%; animation-timing-function: steps(1, end); }
+  18% { background-position: 0% 100%; animation-timing-function: steps(1, end); }
+  40% { background-position: 33.333% 100%; animation-timing-function: steps(1, end); }
+  52% { background-position: 66.667% 100%; animation-timing-function: steps(1, end); }
+  64% { background-position: 100% 100%; animation-timing-function: steps(1, end); }
+  100% { background-position: 100% 100%; }
+}
+
+/* При ошибке герой падает, затем JS возвращает его к началу маршрута. */
+#hero.falling-human #hero-image {
+  animation: fallHuman 0.48s cubic-bezier(0.25, 0.75, 0.45, 1) forwards;
+}
+#hero.falling-bear #hero-image {
+  animation: fallBear 0.5s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+@keyframes fallHuman {
+  0% { background-position: 100% 100%; transform: rotate(0) translateY(0) scale(1); }
+  28% { background-position: 100% 100%; transform: rotate(-12deg) translateY(12px) scale(1.04, 0.96); }
+  100% { background-position: 100% 100%; transform: rotate(78deg) translateY(58px) scale(0.88, 0.92); }
+}
+@keyframes fallBear {
+  0% { background-position: 100% 100%; transform: rotate(0) translateY(0) scale(1); }
+  25% { background-position: 100% 100%; transform: rotate(-8deg) translateY(10px) scale(1.04, 0.95); }
+  100% { background-position: 100% 100%; transform: rotate(66deg) translateY(52px) scale(0.9, 0.9); }
+}
+
+/* человек */
+#hero.human {
+  width: clamp(66px, 8.4vw, 114px);
+}
+
+/* медведь */
+#hero.bear {
+  width: clamp(86px, 12vw, 162px);
+}
+
+/* сообщение о повороте телефона */
+#rotate-message {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  color: white;
+  background: #111;
+  font-size: 22px;
+  font-family: Arial, sans-serif;
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+  #game {
+    display: none;
+  }
+
+  #rotate-message {
+    display: flex;
+  }
+}
+

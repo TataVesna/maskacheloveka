@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+
+  <title>Маска человека</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div id="rotate-message">
+    Поверните устройство горизонтально
+  </div>
+
+<div id="game">
+
+  <div id="world">
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/den.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/forest-start.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/forest-center.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/forest-end.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/mound-start.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/mound-center.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/mound-end.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/river.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/settlement-start.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/settlement-end.png" alt=""></section>
+    <section class="location-scene" aria-hidden="true"><img src="assets/locations/bride-chum.png" alt=""></section>
+  </div>
+
+<label id="speed-control" for="speed-slider">Скорость <output id="speed-value">2.5×</output>
+  <input id="speed-slider" type="range" min="0.4" max="2.5" step="0.1" value="2.5">
+</label>
+
+<div id="hero" class="human running" data-form="human">
+  <div id="hero-image" class="hero-sprite" role="img" aria-label="Кудым-Ош в облике человека"></div>
+</div>
+
+  <script src="game.js"></script>
+</body>
+</html>
