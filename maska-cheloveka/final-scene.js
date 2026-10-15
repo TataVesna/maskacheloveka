@@ -1,2 +1,109 @@
-/* –§—Ä–∏–Ω–∞–ª—å–Ω–∞—è —Å—Ü–µ–Ω–∞ –≤ —á—É–º–µ –Ω–µ–≤–µ—Å—Ç—ã.
-   –ü—Ä–∏ –≤—Ö–æ–¥–µ –≤ —á—É–ºÉBœB◊FB˚B‰ÉBﬂB√BÛB◊B”BÔF?B◊FFF<ÉB‡ÉBˇBÔB√BÀB˜B¯ÉB˚FFB√B˜B√BÀBÔB„BÀB√B◊FFF<∞(ÄÄÉBﬂB√FB◊BÉBˇB˚BÀB◊FFÉB„BœFB˚BÀB˚BœB¯ÉF7BÎFB√B˜B¿ÉBˇB˚F?BÀBÔF?B◊FFF<ÉBˇBÔB√BÀB˜F/BÉB˜B√BÔB˚B€B◊B˜B„B◊B∏Ä®º(††§ÄÙ¯ÅÏ(ÄÅçΩπÕ–Å1=Q%=9}MAPÄÙÄÃ¿¿¿ÄºÄƒ¿‡¿Ï(ÄÅçΩπÕ–Å%91}I=UQ}A=M%Q%=8ÄÙÄƒ¿ÏÄººÉB˜B√FB√BÔB¯ÉBˇB˚FBÔB◊B”B˜B◊BœB¯ÉF7BÎFB√B˜B¿ËÅâ…•ëîµç°’¥(ÄÅçΩπÕ–ÅM1=]}UIQ%=8ÄÙÄƒ–¿¿Ï(ÄÅçΩπÕ–Å=YI1e}1dÄÙÄ‘‘¿Ï(ÄÅçΩπÕ–Å%91}MAÄÙÄ¿∏ÿÏ(ÄÅ±ï–Å—…•ùùï…ïêÄÙÅôÖ±ÕîÏ((ÄÅô’πç—•Ω∏Åç’……ïπ—1ΩçÖ—•Ωπ]•ë—††§ÅÏ(ÄÄÄÅ…ï—’…∏Å•ππï…!ï•ù°–Ä®Å1=Q%=9}MAPÏ(ÄÅÙ((ÄÅçΩπÕ–ÅΩŸï…±Ö‰ÄÙÅëΩç’µïπ–πç…ïÖ—ï±ïµïπ–†âë•ÿà§Ï(ÄÅΩŸï…±Ö‰π•êÄÙÄâô•πÖ∞µ•±±’Õ—…Ö—•Ω∏µΩŸï…±Ö‰àÏ(ÄÅΩŸï…±Ö‰πÕï———…•â’—î†âÖ…•Ñµ°•ëëï∏à∞Äâ—…’îà§Ï(ÄÅΩŸï…±Ö‰πÕ—Â±îπçÕÕQï·–ÄÙÅÄ(ÄÄÄÅ¡ΩÕ•—•Ω∏ËÅô•·ïêÏ(ÄÄÄÅ•πÕï–ËÄ¿Ï(ÄÄÄÅËµ•πëï‡ËÄƒ»¿Ï(ÄÄÄÅë•Õ¡±Ö‰ËÅô±ï‡Ï(ÄÄÄÅÖ±•ù∏µ•—ïµÃËÅçïπ—ï»Ï(ÄÄÄÅ©’Õ—•ô‰µçΩπ—ïπ–ËÅçïπ—ï»Ï(ÄÄÄÅâÖç≠ù…Ω’πêËÄå¿¿¿Ï(ÄÄÄÅΩ¡Öç•—‰ËÄ¿Ï(ÄÄÄÅŸ•Õ•â•±•—‰ËÅ°•ëëï∏Ï(ÄÄÄÅ¡Ω•π—ï»µïŸïπ—ÃËÅπΩπîÏ(ÄÄÄÅ—…ÖπÕ•—•Ω∏ËÅΩ¡Öç•—‰Äƒƒ¿¡µÃÅç’â•åµâïÈ•ï»†¿∏»»∞Äƒ∞Ä¿∏Ãÿ∞Äƒ§∞ÅŸ•Õ•â•±•—‰Äƒƒ¿¡µÃÅÕ—ï¿µïπêÏ(ÄÄÄÅΩŸï…ô±Ω‹ËÅ°•ëëï∏Ï(ÄÅÄÏ((ÄÅçΩπÕ–Å•µÖùîÄÙÅëΩç’µïπ–πç…ïÖ—ï±ïµïπ–†â•µúà§Ï(ÄÅ•µÖùîπÕ…åÄÙÄâÖÕÕï—ÃøBB]BìB„BıBcBÔBÔF;FFFB√FB„F<π¡πúàÏ(ÄÅ•µÖùîπÖ±–ÄÙÄãBìB„B˜B√BÔF3B˜B√F<ÉB„BÔBÔF;FFFB√FB„F<ÉFÉBœBÔB√BﬂB√BÛB‡ÉB˜B◊BÀB◊FFF,àÏ(ÄÅ•µÖùîπÕ—Â±îπçÕÕQï·–ÄÙÅÄ(ÄÄÄÅë•Õ¡±Ö‰ËÅâ±Ωç¨Ï(ÄÄÄÅ›•ë—†ËÄƒ¿¿îÏ(ÄÄÄÅ°ï•ù°–ËÄƒ¿¿îÏ(ÄÄÄÅΩâ©ïç–µô•–ËÅçΩπ—Ö•∏Ï(ÄÄÄÅΩâ©ïç–µ¡ΩÕ•—•Ω∏ËÅçïπ—ï»Ï(ÄÄÄÅ—…ÖπÕôΩ…¥ËÅÕçÖ±î†ƒ∏¿Ã§Ï(ÄÄÄÅô•±—ï»ËÅâ±’»†Ÿ¡‡§Åâ…•ù°—πïÕÃ†¿∏‹§Ï(ÄÄÄÅ—…ÖπÕ•—•Ω∏ËÅ—…ÖπÕôΩ…¥Äƒ–¿¡µÃÅç’â•åµâïÈ•ï»†¿∏»»∞Äƒ∞Ä¿∏Ãÿ∞Äƒ§∞Åô•±—ï»Äƒ–¿¡µÃÅïÖÕîÏ(ÄÅÄÏ(ÄÅΩŸï…±Ö‰πÖ¡¡ïπë°•±ê°•µÖùî§Ï(ÄÅùÖµîπÖ¡¡ïπë°•±ê°ΩŸï…±Ö‰§Ï((ÄÅô’πç—•Ω∏ÅÕ°Ω›•πÖ∞†§ÅÏ(ÄÄÄÅ•òÄ°—…•ùùï…ïê§Å…ï—’…∏Ï(ÄÄÄÅ—…•ùùï…ïêÄÙÅ—…’îÏ((ÄÄÄÅçΩπÕ–ÅÕ—Ö…—YÖ±’îÄÙÅ9’µâï»°Õ¡ïïëM±•ëï»πŸÖ±’î§ÅÒÄ»∏‘Ï(ÄÄÄÅçΩπÕ–ÅÕ—Ö…—–ÄÙÅ¡ï…ôΩ…µÖπçîππΩ‹†§Ï((ÄÄÄÄº®ÉBBÔB√BÀB˜B¯ÉFB˜B„B€B√B◊BÉFBÎB˚FB˚FFF0ÉB«B◊BœB¿ÉB˜B¿ÉBÀFB˚B”B‘ÉB»ÉFFB∏Ä®º(ÄÄÄÅô’πç—•Ω∏ÅÕ±Ω‹°πΩ‹§ÅÏ(ÄÄÄÄÄÅçΩπÕ–Å¡…Ωù…ïÕÃÄÙÅ5Ö—†πµ•∏†ƒ∞Ä°πΩ‹Ä¥ÅÕ—Ö…—–§ÄºÅM1=]}UIQ%=8§Ï(ÄÄÄÄÄÅçΩπÕ–ÅïÖÕïêÄÙÄƒÄ¥Å5Ö—†π¡Ω‹†ƒÄ¥Å¡…Ωù…ïÕÃ∞ÄÃ§Ï(ÄÄÄÄÄÅçΩπÕ–ÅŸÖ±’îÄÙÅÕ—Ö…—YÖ±’îÄ¨Ä°%91}MAÄ¥ÅÕ—Ö…—YÖ±’î§Ä®ÅïÖÕïêÏ(ÄÄÄÄÄÅÕ¡ïïëM±•ëï»πŸÖ±’îÄÙÅM—…•πú°5Ö—†πµÖ‡†¿∏–∞ÅŸÖ±’î§§Ï(ÄÄÄÄÄÅÕ¡ïïëYÖ±’îπŸÖ±’îÄÙÅÄëÌ9’µâï»°Õ¡ïïëM±•ëï»πŸÖ±’î§π—Ω•·ïê†ƒ•˜]ÄÏ(ÄÄÄÄÄÅÕ¡ïïëYÖ±’îπ—ï·—Ωπ—ïπ–ÄÙÅÕ¡ïïëYÖ±’îπŸÖ±’îÏ(ÄÄÄÄÄÅ•òÄ°¡…Ωù…ïÕÃÄÄƒÄòòÅ…’ππ•πú§Å…ï≈’ïÕ—π•µÖ—•Ωπ…Öµî°Õ±Ω‹§Ï(ÄÄÄÅÙ(ÄÄÄÅ…ï≈’ïÕ—π•µÖ—•Ωπ…Öµî°Õ±Ω‹§Ï((ÄÄÄÅ›•πëΩ‹πÕï—Q•µïΩ’–††§ÄÙ¯ÅÏ(ÄÄÄÄÄÅΩŸï…±Ö‰πÕ—Â±îπŸ•Õ•â•±•—‰ÄÙÄâŸ•Õ•â±îàÏ(ÄÄÄÄÄÅΩŸï…±Ö‰πÕ—Â±îπΩ¡Öç•—‰ÄÙÄàƒàÏ(ÄÄÄÄÄÅ•µÖùîπÕ—Â±îπ—…ÖπÕôΩ…¥ÄÙÄâÕçÖ±î†ƒ§àÏ(ÄÄÄÄÄÅ•µÖùîπÕ—Â±îπô•±—ï»ÄÙÄââ±’»†¡¡‡§Åâ…•ù°—πïÕÃ†ƒ§àÏ(ÄÄÄÅÙ∞Å=YI1e}1d§Ï((ÄÄÄÄº®ÉBkB˚BœB”B¿ÉB„BÔBÔF;FFFB√FB„F<ÉBˇFFFB‡ÉBˇB˚BÔB˜B˚FFF3F8ÉFB˚B∞ÉB˚FFB√B˜B√BÀBÔB„BÀB√B◊BÉB„BœFF∏Ä®º(ÄÄÄÅ›•πëΩ‹πÕï—Q•µïΩ’–††§ÄÙ¯ÅÏ(ÄÄÄÄÄÅ…’ππ•πúÄÙÅôÖ±ÕîÏ(ÄÄÄÄÄÅ©’µ¿ÄÙÅπ’±∞Ï(ÄÄÄÄÄÅ›Öë•πúÄÙÅπ’±∞Ï(ÄÄÄÄÄÅ°ï…ºπç±ÖÕÕ1•Õ–π…ïµΩŸî†â…’ππ•πúà∞Äâ©’µ¡•πúà∞Äâ›Öë•πúà§Ï(ÄÄÄÄÄÅ°ï…ºπç±ÖÕÕ1•Õ–πÖëê†âô•πÖ∞µ¡Ö’Õïêà§Ï(ÄÄÄÄÄÅ°ï…ºπÕ—Â±îπ—…ÖπÕôΩ…¥ÄÙÄààÏ(ÄÄÄÅÙ∞ÅM11=]}UIQ%=8§Ï(ÄÅÙ((ÄÅô’πç—•Ω∏Å›Ö—ç°•πÖ∞†§ÅÏ(ÄÄÄÅ•òÄ†Ö—…•ùùï…ïêÄòòÅùÖµïM—Ö…—ïêÄòòÅ…’ππ•πúÄòòÄÖ—’—Ω…•Ö±ç—•Ÿî§ÅÏ(ÄÄÄÄÄÅçΩπÕ–Åçïπ—ï»ÄÙÅ›Ω…±ë`Ä¨Å°ï…ΩMç…ïïπ`†§Ï(ÄÄÄÄÄÅçΩπÕ–Åô•πÖ±M—Ö…–ÄÙÅç’……ïπ—1ΩçÖ—•Ωπ]•ë—††§Ä®Å%91}I=UQ}A=M%Q%=8Ï(ÄÄÄÄÄÅ•òÄ°çïπ—ï»Ä¯ÙÅô•πÖ±M—Ö…–Ä¨Å•ππï…]•ë—†Ä®Ä¿∏¿–§ÅÕ°Ω›•πÖ∞†§Ï(ÄÄÄÅÙ(ÄÄÄÅ…ï≈’ïÕ—π•µÖ—•Ωπ…Öµî°›Ö—ç°•πÖ∞§Ï(ÄÅÙ((ÄÅ…ï≈’ïÕ—π•µÖ—•Ωπ…Öµî°›Ö—ç°•πÖ∞§Ï)Ù§†§Ï(
+/* –§–∏–Ω–∞–ª—å–Ω–∞—è —Å—Ü–µ–Ω–∞ –≤ —á—É–º–µ –Ω–µ–≤–µ—Å—Ç—ã.
+   –ü—Ä–∏ –≤—Ö–æ–¥–µ –Ω–∞ –ø–æ—Å–ª–µ–¥–Ω–∏–π —ç–∫—Ä–∞–Ω –≥–µ—Ä–æ–π –ø–ª–∞–≤–Ω–æ –∑–∞–º–µ–¥–ª—è–µ—Ç—Å—è,
+   –∑–∞—Ç–µ–º –ø–æ–≤–µ—Ä—Ö –∏–≥—Ä—ã –ø–æ—è–≤–ª—è–µ—Ç—Å—è —Ñ–∏–Ω–∞–ª—å–Ω–∞—è –∏–ª–ª—é—Å—Ç—Ä–∞—Ü–∏—è. */
+(() => {
+  const LOCATION_ASPECT = 3000 / 1080;
+  const FINAL_SCENE_INDEX = 10; // bride-chum ‚Äî 11-–π —ç–∫—Ä–∞–Ω, –∏–Ω–¥–µ–∫—Å 10
+  const TRIGGER_FRACTION = 0.04;
+  const SLOWDOWN_DURATION = 1400;
+  const REVEAL_DELAY = 350;
+  const REVEAL_DURATION = 1200;
+
+  let triggered = false;
+
+  const overlay = document.createElement("div");
+  overlay.id = "final-scene-overlay";
+  Object.assign(overlay.style, {
+    position: "fixed",
+    inset: "0",
+    zIndex: "85",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "#000",
+    opacity: "0",
+    visibility: "hidden",
+    pointerEvents: "none",
+    transition: `opacity ${REVEAL_DURATION}ms ease, visibility ${REVEAL_DURATION}ms ease`
+  });
+
+  const image = document.createElement("img");
+  image.src = "assets/–ü–ó_–§–∏–Ω_–ò–ª–ª—é—Å—Ç—Ä–∞—Ü–∏—è.png";
+  image.alt = "–§–∏–Ω–∞–ª—å–Ω–∞—è –∏–ª–ª—é—Å—Ç—Ä–∞—Ü–∏—è ‚Äî –≥–ª–∞–∑–∞ –Ω–µ–≤–µ—Å—Ç—ã";
+  Object.assign(image.style, {
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+    background: "#000",
+    transform: "scale(1.035)",
+    filter: "blur(9px)",
+    opacity: "0",
+    transition: `transform ${REVEAL_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1), filter ${REVEAL_DURATION}ms ease, opacity ${REVEAL_DURATION}ms ease`
+  });
+
+  overlay.appendChild(image);
+  game.appendChild(overlay);
+
+  function currentLocationWidth() {
+    return innerHeight * LOCATION_ASPECT;
+  }
+
+  function revealFinalImage() {
+    overlay.style.visibility = "visible";
+    requestAnimationFrame(() => {
+      overlay.style.opacity = "1";
+      image.style.opacity = "1";
+      image.style.transform = "scale(1)";
+      image.style.filter = "blur(0px)";
+    });
+  }
+
+  function startFinalScene() {
+    if (triggered) return;
+    triggered = true;
+
+    const startingSpeed = Number(speedSlider.value) || 2.5;
+    const minimumSpeed = Math.min(startingSpeed, 0.45);
+    const startedAt = performance.now();
+
+    window.setTimeout(revealFinalImage, REVEAL_DELAY);
+
+    function slowDown(now) {
+      const progress = Math.max(0, Math.min((now - startedAt) / SLOWDOWN_DURATION, 1));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const speed = startingSpeed + (minimumSpeed - startingSpeed) * eased;
+
+      speedSlider.value = String(Math.max(0.4, speed));
+      speedValue.value = `${Number(speedSlider.value).toFixed(1)}√ó`;
+      speedValue.textContent = speedValue.value;
+
+      if (progress < 1) {
+        requestAnimationFrame(slowDown);
+        return;
+      }
+
+      running = false;
+      jump = null;
+      wading = null;
+      hero.classList.remove("jumping", "wading");
+      hero.classList.add("running");
+      hero.style.transform = "";
+    }
+
+    requestAnimationFrame(slowDown);
+  }
+
+  function watchFinalScene() {
+    if (!triggered && gameStarted && running && !tutorialActive) {
+      const location = currentLocationWidth();
+      const triggerX = location * (FINAL_SCENE_INDEX + TRIGGER_FRACTION);
+      const heroCenter = worldX + heroScreenX();
+
+      if (heroCenter >= triggerX) startFinalScene();
+    }
+
+    if (!triggered) requestAnimationFrame(watchFinalScene);
+  }
+
+  requestAnimationFrame(watchFinalScene);
+})();
