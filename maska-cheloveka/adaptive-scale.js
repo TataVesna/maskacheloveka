@@ -11,7 +11,7 @@
   const HERO_VERTICAL_LIFT = 1;
   const CROWD_VERTICAL_LIFT = 6;
   const WITCH_VERTICAL_LIFT = 6;
-  const STUMP_VERTICAL_LIFT = 25;
+  const STUMP_VERTICAL_LIFT = 50;
   const STUMP_SCALE = 2 / 3;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
