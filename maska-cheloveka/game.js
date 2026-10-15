@@ -39,17 +39,17 @@ const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * inn
 const heroScreenX = () => hero.offsetLeft + hero.offsetWidth / 2;
 const obstacleTypes = [
   {
-    id: "ravine", src: "assets/obstacles/ravine-bear-jump.png", className: "obstacle--ravine",
+    id: "ravine", src: "assets/obstacles/cliff-bear-jump.png", className: "obstacle--ravine",
     alt: "Овраг: перепрыгнуть можно медведем", hint: "МЕДВЕДЬ — ПРЫЖОК",
     rule: "Для оврага нужен прыжок медведем.", mode: "ravine", indicatorForm: "bear"
   },
   {
-    id: "river", src: "assets/obstacles/deep-river-bear-wade-filled.png", className: "obstacle--river",
+    id: "river", src: "assets/obstacles/river-ford-bear.png", className: "obstacle--river",
     alt: "Глубокая река: перейти вброд может медведь", hint: "МЕДВЕДЬ — ВБРОД",
     rule: "Глубокую реку вброд проходит медведь.", mode: "ground", form: "bear", indicatorForm: "bear"
   },
   {
-    id: "bridge", src: "assets/obstacles/fragile-bridge-human-pass.png", className: "obstacle--bridge",
+    id: "bridge", src: "assets/obstacles/river-bridge-human.png", className: "obstacle--bridge",
     alt: "Хрупкий мост: пройти может человек", hint: "ЧЕЛОВЕК — ПО МОСТУ",
     rule: "Хрупкий мост выдерживает только человека.", mode: "ground", form: "human", indicatorForm: "human"
   },
