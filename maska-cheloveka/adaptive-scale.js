@@ -10,6 +10,7 @@
   const BUSH_VERTICAL_OFFSET = 35;
   const CROWD_VERTICAL_LIFT = 5;
   const WITCH_VERTICAL_LIFT = 5;
+  const STUMP_SCALE = 2 / 3;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
 
@@ -93,7 +94,7 @@
     hero.style.bottom = `calc(var(--run-line-bottom) - ${12 * sceneScale}px)`;
 
     /* Препятствия: фактическая ширина меняется, поэтому offsetWidth и коллизии
-       остаются синхронны с визуальным размером. */
+       остаются синхронны с визуальным размером. Пень уменьшен в 1.5 раза. */
     obstacles.forEach((obstacle) => {
       if (obstacle._logicalX != null) {
         obstacle.x = obstacle._logicalX * newLocationWidth;
@@ -101,7 +102,8 @@
         if (obstacle.hint) obstacle.hint.style.left = `${obstacle.x}px`;
       }
 
-      setScaledImageWidth(obstacle.element);
+      const obstacleScale = obstacle.id === 'stump' ? STUMP_SCALE : 1;
+      setScaledImageWidth(obstacle.element, obstacleScale);
 
       const baseBottom = obstacle.id === 'crowd' ? 40 : 30;
       const lift = obstacle.id === 'crowd' ? CROWD_VERTICAL_LIFT : 0;
