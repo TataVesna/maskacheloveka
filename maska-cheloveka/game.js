@@ -7,11 +7,12 @@ const speedValue = document.getElementById("speed-value");
 const jumpPreparationMs = 50;
 const spriteFrames = {
   human: {
-    run: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-run-${frame}.png`),
+    // Три опорные позы: правая нога впереди, ноги под корпусом, левая впереди.
+    run: [1, 3, 4].map((frame) => `assets/characters/frames/human-run-${frame}.png`),
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-jump-${frame}.png`)
   },
   bear: {
-    run: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-run-${frame}.png`),
+    run: [1, 3, 4].map((frame) => `assets/characters/frames/bear-run-${frame}.png`),
     jump: [1, 2, 3, 4].map((frame) => `assets/characters/frames/bear-jump-${frame}.png`)
   }
 };
@@ -173,8 +174,9 @@ function updateHeroAnimation(now) {
     return;
   }
 
-  const cycleDuration = form === "bear" ? 380 : 280;
-  const frameIndex = Math.floor(now / (cycleDuration / 4)) % 4;
+  const cycleDuration = form === "bear" ? 285 : 210;
+  const runFrames = spriteFrames[form].run;
+  const frameIndex = Math.floor(now / (cycleDuration / runFrames.length)) % runFrames.length;
   setHeroSpriteFrame(form, "run", frameIndex);
 }
 
