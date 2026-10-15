@@ -101,7 +101,7 @@ const obstacleTypes = [
     form: "human",
     indicatorForm: "human",
     width: "clamp(720px, 145vh, 1600px)",
-    bottom: "13.1dvh",
+    bottom: "8.8dvh",
     zIndex: "4",
     hintTop: "31vh"
   },
@@ -115,7 +115,7 @@ const obstacleTypes = [
     mode: "bear-jump",
     indicatorForm: "bear",
     width: "22.1vw",
-    bottom: "14.6dvh",
+    bottom: "10.5dvh",
     zIndex: "4",
     hintTop: "35vh",
     gapFactor: 0.47
@@ -130,7 +130,7 @@ const obstacleTypes = [
     mode: "any-jump",
     indicatorForm: null,
     width: "clamp(120px, 13vw, 210px)",
-    bottom: "17.6dvh",
+    bottom: "12.5dvh",
     zIndex: "4",
     hintTop: "40vh",
     gapFactor: 0.44
@@ -146,7 +146,7 @@ const obstacleTypes = [
     form: "human",
     indicatorForm: "human",
     width: "clamp(240px, 22vw, 360px)",
-    bottom: "15.8dvh",
+    bottom: "10.8dvh",
     zIndex: "4",
     hintTop: "43vh"
   }
@@ -228,7 +228,7 @@ function placeObstacles() {
         : "Синий куст: дальше нужен человек";
       indicator.style.position = "absolute";
       indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
-      indicator.style.bottom = "16.8dvh";
+      indicator.style.bottom = "12dvh";
       indicator.style.width = "clamp(120px, 12vw, 200px)";
       indicator.style.height = "auto";
       indicator.style.transform = "translateX(-50%)";
