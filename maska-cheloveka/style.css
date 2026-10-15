@@ -173,47 +173,37 @@ body {
   position: absolute;
   z-index: 3;
   bottom: var(--run-line-bottom);
+  width: auto !important;
+  max-width: none;
   height: auto;
   transform: translateX(-50%);
   pointer-events: none;
 }
 
-/* Размеры привязаны к высоте героя и к геометрии каждого наброска. */
+/* Препятствия показываются в исходном размере PNG. */
 .obstacle--ravine {
-  /* Открытый провал занимает ~30% рисунка: около 82% прыжка медведя. */
-  width: 63vw;
   bottom: 20.1dvh;
-  transform: translate(-50%, 60%); /* кромки оврага совпадают с линией бега */
+  transform: translate(-50%, 60%);
   z-index: 4;
-}
-.obstacle--tree,
-.obstacle--passage {
-  width: clamp(720px, 145vh, 1600px); /* просвет под препятствием должен быть выше человека */
 }
 .obstacle--tree { bottom: 16.8dvh; }
 .obstacle--passage { bottom: 13.1dvh; }
 .obstacle--river {
-  width: clamp(460px, 55vw, 860px);
   bottom: 15.8dvh;
-  transform: translate(-50%, 68%); /* берега на линии бега, русло ниже */
+  transform: translate(-50%, 68%);
   z-index: 4;
 }
 .obstacle--rubble {
-  /* Рисунок целиком чуть короче прыжка медведя: 22.1vw против 23.52vw. */
-  width: 22.1vw;
   bottom: 14.6dvh;
   z-index: 4;
 }
 .obstacle--bush {
-  /* Человек прыгает на 11.55vw; куст занимает около 90% этой дистанции. */
-  width: 10.4vw;
   bottom: 17.3dvh;
   z-index: 4;
 }
 .obstacle--bridge {
-  width: clamp(520px, 48vw, 780px);
   bottom: 18.5dvh;
-  transform: translate(-50%, 48%); /* настил совмещён с линией бега */
+  transform: translate(-50%, 48%);
   z-index: 4;
 }
 
