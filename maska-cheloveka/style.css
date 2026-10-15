@@ -213,43 +213,9 @@ body {
   height: auto;
 }
 
+/* Текстовые подсказки над препятствиями отключены. */
 .obstacle-hint {
-  position: absolute;
-  z-index: 8;
-  left: 0;
-  max-width: clamp(150px, 18vw, 230px);
-  padding: 7px 10px;
-  transform: translateX(-50%);
-  border: 2px solid #171717;
-  border-radius: 4px;
-  color: #111;
-  background: #fffF;
-  font: 700 clamp(11px, 1vw, 15px)/1.15 Arial, sans-serif;
-  text-align: center;
-  white-space: normal;
-  pointer-events: none;
-}
-.obstacle-hint::after {
-  content: "";
-  position: absolute;
-  left: calc(50% - 6px);
-  bottom: -8px;
-  width: 10px;
-  height: 10px;
-  transform: rotate(45deg);
-  border-right: 2px solid #171717;
-  border-bottom: 2px solid #171717;
-  background: #fff;
-}
-.obstacle-hint--tree,
-.obstacle-hint--passage { top: 31vh; }
-.obstacle-hint--ravine { top: 61vh; }
-.obstacle-hint--river { top: 68vh; }
-.obstacle-hint--bridge { top: 60vh; }
-.obstacle-hint--rubble { top: 35vh; }
-.obstacle-hint--bush {
-  top: 36vh;
-  max-width: clamp(210px, 24vw, 300px);
+  display: none !important;
 }
 
 #speed-control {
