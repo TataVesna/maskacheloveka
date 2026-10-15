@@ -18,8 +18,11 @@
   world.appendChild(witch);
 
   /* Ровно середина маршрута из 11 экранов. */
-  const witchX = locationWidth * 5.5;
-  witch.style.left = `${witchX}px`;
+  const witchRoutePosition = 5.5;
+  const currentLocationWidth = () => innerHeight * (3000 / 1080);
+  const currentWitchX = () => currentLocationWidth() * witchRoutePosition;
+  witch.style.left = `${currentWitchX()}px`;
+  witch.dataset.logicalX = String(witchRoutePosition);
 
   let triggered = false;
   let waitingForInteraction = false;
@@ -44,6 +47,7 @@
     hero.classList.add("witch-paused");
     hero.style.transform = "";
 
+    const witchX = currentWitchX();
     const witchScreenX = witchX - worldX;
     const focusX = Math.max(innerWidth * 0.25, Math.min(innerWidth * 0.75, witchScreenX));
 
@@ -86,7 +90,7 @@
     if (!triggered && !completed && gameStarted && running && !tutorialActive) {
       const center = worldX + heroScreenX();
       const approachDistance = innerWidth * 0.28;
-      if (center >= witchX - approachDistance) triggerWitchScene();
+      if (center >= currentWitchX() - approachDistance) triggerWitchScene();
     }
     requestAnimationFrame(watchWitch);
   }
