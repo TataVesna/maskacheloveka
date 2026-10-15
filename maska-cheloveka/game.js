@@ -5,6 +5,7 @@ const heroImage = document.getElementById("hero-image");
 const speedSlider = document.getElementById("speed-slider");
 const speedValue = document.getElementById("speed-value");
 const startScreen = document.getElementById("start-screen");
+const tutorialOverlay = document.getElementById("tutorial-overlay");
 const jumpPreparationMs = 50;
 
 const spriteFrames = {
@@ -38,6 +39,7 @@ Object.values(spriteFrames).forEach((actions) => {
 const css = getComputedStyle(document.documentElement);
 const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * innerHeight / 100;
 const heroScreenX = () => hero.offsetLeft + hero.offsetWidth / 2;
+const tutorialTriggerX = locationWidth + innerWidth * 0.04;
 
 const obstacleTypes = [
   {
@@ -162,6 +164,9 @@ let running = false;
 let jump = null;
 let wading = null;
 let lastFrameAt = 0;
+let tutorialShown = false;
+let tutorialActive = false;
+let touchStart = null;
 
 function shuffle(items) {
   const result = [...items];
@@ -311,12 +316,12 @@ function updateHeroAnimation(now) {
 }
 
 function toggleHeroForm() {
-  if (!gameStarted || !running) return;
+  if (!gameStarted || !running || tutorialActive) return;
   setForm(hero.dataset.form === "human" ? "bear" : "human");
 }
 
 function startJump() {
-  if (!gameStarted || jump || !running) return;
+  if (!gameStarted || jump || !running || tutorialActive) return;
   const form = hero.dataset.form;
   jump = {
     takeoffAt: performance.now() + jumpPreparationMs,
@@ -328,6 +333,30 @@ function startJump() {
   hero.classList.add("jumping");
 }
 
+function showTutorial() {
+  if (tutorialShown || tutorialActive) return;
+  tutorialShown = true;
+  tutorialActive = true;
+  running = false;
+  jump = null;
+  hero.classList.remove("jumping", "running");
+  hero.classList.add("tutorial-paused");
+  hero.style.transform = "";
+  tutorialOverlay.classList.remove("is-hidden");
+  tutorialOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeTutorial() {
+  if (!tutorialActive) return;
+  tutorialActive = false;
+  tutorialOverlay.classList.add("is-hidden");
+  tutorialOverlay.setAttribute("aria-hidden", "true");
+  hero.classList.remove("tutorial-paused");
+  hero.classList.add("running");
+  running = true;
+  lastFrameAt = performance.now();
+}
+
 function resetRun() {
   running = gameStarted;
   worldX = 0;
@@ -335,7 +364,10 @@ function resetRun() {
   setForm("human");
   jump = null;
   wading = null;
-  hero.classList.remove("wading");
+  tutorialActive = false;
+  tutorialOverlay.classList.add("is-hidden");
+  tutorialOverlay.setAttribute("aria-hidden", "true");
+  hero.classList.remove("wading", "tutorial-paused");
   hero.classList.remove("jumping", "falling", "falling-human", "falling-bear");
   hero.classList.add("running");
   hero.style.transform = "";
@@ -378,8 +410,20 @@ startScreen.addEventListener("keydown", (event) => {
   }
 });
 
+tutorialOverlay.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  closeTutorial();
+});
+
+tutorialOverlay.addEventListener("keydown", (event) => {
+  if (event.code === "Enter" || event.code === "Space") {
+    event.preventDefault();
+    closeTutorial();
+  }
+});
+
 game.addEventListener("pointerdown", (event) => {
-  if (event.pointerType !== "mouse" || event.target.closest("#speed-control, #start-screen")) return;
+  if (event.pointerType !== "mouse" || event.target.closest("#speed-control, #start-screen, #tutorial-overlay")) return;
   if (event.button === 0) startJump();
   else if (event.button === 2) toggleHeroForm();
 });
@@ -389,13 +433,36 @@ game.addEventListener("contextmenu", (event) => {
 });
 
 game.addEventListener("touchstart", (event) => {
-  if (event.target.closest("#speed-control, #start-screen")) return;
+  if (event.target.closest("#speed-control, #start-screen, #tutorial-overlay")) return;
+  if (!gameStarted || !running) return;
+  const touch = event.changedTouches[0];
+  touchStart = { x: touch.clientX, y: touch.clientY, time: performance.now() };
   event.preventDefault();
-  toggleHeroForm();
+}, { passive: false });
+
+game.addEventListener("touchend", (event) => {
+  if (event.target.closest("#speed-control, #start-screen, #tutorial-overlay")) return;
+  if (!touchStart || !gameStarted || !running) return;
+  const touch = event.changedTouches[0];
+  const dx = touch.clientX - touchStart.x;
+  const dy = touch.clientY - touchStart.y;
+  const elapsed = performance.now() - touchStart.time;
+  const isUpSwipe = dy < -45 && Math.abs(dy) > Math.abs(dx) * 1.15 && elapsed < 650;
+  touchStart = null;
+  event.preventDefault();
+  if (isUpSwipe) startJump();
+  else toggleHeroForm();
 }, { passive: false });
 
 window.addEventListener("keydown", (event) => {
   if (!gameStarted) return;
+  if (tutorialActive) {
+    if (event.code === "Enter" || event.code === "Space") {
+      event.preventDefault();
+      closeTutorial();
+    }
+    return;
+  }
   if (event.code === "Space" || event.code === "ArrowUp") {
     event.preventDefault();
     startJump();
@@ -529,7 +596,16 @@ function gameLoop(now) {
 
     updateHeroAnimation(now);
 
-    const center = worldX + heroScreenX();
+    let center = worldX + heroScreenX();
+    if (!tutorialShown && center >= tutorialTriggerX) {
+      worldX = Math.min(Math.max(0, tutorialTriggerX - heroScreenX()), maxScroll);
+      world.style.transform = `translate3d(${-worldX}px, 0, 0)`;
+      showTutorial();
+      requestAnimationFrame(gameLoop);
+      return;
+    }
+
+    center = worldX + heroScreenX();
     if (updateObstacleCollisions(previousCenter, center, now, pixelsPerSecond, landedJump)) {
       requestAnimationFrame(gameLoop);
       return;
