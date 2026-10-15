@@ -43,6 +43,21 @@
     style="padding:0; cursor:pointer; background:#000 url('assets/start-screen.png') center / cover no-repeat;"
   ></div>
 
+  <div id="tutorial-overlay" class="is-hidden" role="button" tabindex="0" aria-hidden="true">
+    <div class="tutorial-card">
+      <div class="tutorial-title">Управление</div>
+      <div class="tutorial-controls tutorial-controls--desktop">
+        <span><b>ЛКМ</b> — прыжок</span>
+        <span><b>ПКМ</b> — смена облика</span>
+      </div>
+      <div class="tutorial-controls tutorial-controls--touch">
+        <span><b>Свайп вверх</b> — прыжок</span>
+        <span><b>Тап</b> — смена облика</span>
+      </div>
+      <div class="tutorial-continue">Нажмите, чтобы продолжить</div>
+    </div>
+  </div>
+
 <label id="speed-control" for="speed-slider">Скорость <output id="speed-value">2.5×</output>
   <input id="speed-slider" type="range" min="0.4" max="2.5" step="0.1" value="2.5">
 </label>
