@@ -4,6 +4,7 @@ const hero = document.getElementById("hero");
 const heroImage = document.getElementById("hero-image");
 const speedSlider = document.getElementById("speed-slider");
 const speedValue = document.getElementById("speed-value");
+const jumpPreparationMs = 50;
 const spriteFrames = {
   human: {
     run: [1, 2, 3, 4].map((frame) => `assets/characters/frames/human-run-${frame}.png`),
@@ -163,13 +164,16 @@ function updateHeroAnimation(now) {
 
   const form = hero.dataset.form;
   if (jump && hero.classList.contains("jumping")) {
-    const progress = Math.min((now - jump.startedAt) / (jump.duration * 1000), 1);
-    const frameIndex = progress < 0.4 ? 0 : progress < 0.52 ? 1 : progress < 0.64 ? 2 : 3;
+    const progress = Math.max(0, Math.min((now - jump.takeoffAt) / (jump.duration * 1000), 1));
+    // Кадр приседания держится 50 мс на земле; при отрыве сразу видны вытянутые руки.
+    const frameIndex = now < jump.takeoffAt
+      ? 0
+      : progress < 0.16 ? 1 : progress < 0.44 ? 2 : 3;
     setHeroSpriteFrame(form, "jump", frameIndex);
     return;
   }
 
-  const cycleDuration = form === "bear" ? 580 : 420;
+  const cycleDuration = form === "bear" ? 380 : 280;
   const frameIndex = Math.floor(now / (cycleDuration / 4)) % 4;
   setHeroSpriteFrame(form, "run", frameIndex);
 }
@@ -184,7 +188,7 @@ function startJump() {
   if (jump || !running) return;
   const form = hero.dataset.form;
   jump = {
-    startedAt: performance.now(),
+    takeoffAt: performance.now() + jumpPreparationMs,
     form,
     // В облике медведя прыжок выше и дольше, значит и горизонтальный пролёт длиннее.
     duration: (form === "bear" ? 1.12 : 0.55) / Number(speedSlider.value),
@@ -250,11 +254,12 @@ speedSlider.addEventListener("input", () => {
 
 function jumpDistanceAtBoundary(activeJump, now, speed, center, boundary) {
   if (!activeJump || speed <= 0) return 0;
-  const elapsedAtBoundary = (now - activeJump.startedAt) / 1000 - (center - boundary) / speed;
+  const elapsedAtBoundary = (now - activeJump.takeoffAt) / 1000 - (center - boundary) / speed;
   return speed * Math.max(0, activeJump.duration - elapsedAtBoundary);
 }
 
 function updateObstacleCollisions(previousCenter, center, now, speed, landedJump = null) {
+  const airborneJump = jump && now >= jump.takeoffAt ? jump : null;
   for (const obstacle of obstacles) {
     if (obstacle.crossed) continue;
 
@@ -263,7 +268,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       const start = obstacle.x - halfRiver;
       const end = obstacle.x + halfRiver;
       if (!wading && previousCenter < start && center >= start) {
-        if (hero.dataset.form !== "bear" || jump) {
+        if (hero.dataset.form !== "bear" || airborneJump) {
           failRun();
           return true;
         }
@@ -271,7 +276,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
         hero.classList.add("wading");
       }
       if (wading?.obstacle === obstacle) {
-        if (hero.dataset.form !== "bear" || jump) {
+        if (hero.dataset.form !== "bear" || airborneJump) {
           failRun();
           return true;
         }
@@ -294,7 +299,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       const bushEnd = obstacle.x + halfBush;
       if (!obstacle.inside && previousCenter < bushStart && center >= bushStart) {
         obstacle.inside = true;
-        const enteringJump = jump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, bushStart) > 0 ? landedJump : null);
+        const enteringJump = airborneJump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, bushStart) > 0 ? landedJump : null);
         const bearCanPass = hero.dataset.form === "bear" && (!enteringJump || enteringJump.form === "bear");
         if (bearCanPass) {
           if (center >= bushEnd) {
@@ -325,8 +330,8 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
           continue;
         }
         if (center >= bushEnd) {
-          const bearCleared = hero.dataset.form === "bear" && (!jump || jump.form === "bear");
-          const humanCleared = hero.dataset.form === "human" && (!jump || jump.form === "human");
+          const bearCleared = hero.dataset.form === "bear" && (!airborneJump || airborneJump.form === "bear");
+          const humanCleared = hero.dataset.form === "human" && (!airborneJump || airborneJump.form === "human");
           if (!bearCleared && !humanCleared) {
             failRun();
             return true;
@@ -334,8 +339,8 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
           obstacle.inside = false;
           obstacle.crossed = true;
         } else {
-          const bearCanPass = hero.dataset.form === "bear" && (!jump || jump.form === "bear");
-          const humanIsJumping = hero.dataset.form === "human" && jump?.form === "human";
+          const bearCanPass = hero.dataset.form === "bear" && (!airborneJump || airborneJump.form === "bear");
+          const humanIsJumping = hero.dataset.form === "human" && airborneJump?.form === "human";
           if (!bearCanPass && !humanIsJumping) {
             failRun();
             return true;
@@ -352,7 +357,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
       const gapEnd = obstacle.x + halfGap;
       if (!obstacle.inside && previousCenter < gapStart && center >= gapStart) {
         obstacle.inside = true;
-        const enteringJump = jump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, gapStart) > 0 ? landedJump : null);
+        const enteringJump = airborneJump || (landedJump && jumpDistanceAtBoundary(landedJump, now, speed, center, gapStart) > 0 ? landedJump : null);
         if (!enteringJump) {
           failRun();
           return true;
@@ -379,7 +384,7 @@ function updateObstacleCollisions(previousCenter, center, now, speed, landedJump
     if (!obstacle.crossed && previousCenter < obstacle.x && center >= obstacle.x) {
       obstacle.crossed = true;
       const requiredForm = obstacle.form;
-      const isGrounded = !jump;
+      const isGrounded = !airborneJump;
       if (hero.dataset.form !== requiredForm || !isGrounded) {
         failRun();
         return true;
@@ -403,9 +408,14 @@ function gameLoop(now) {
 
     let landedJump = null;
     if (activeJump && jump === activeJump) {
-      const progress = Math.min((now - activeJump.startedAt) / (activeJump.duration * 1000), 1);
-      hero.style.transform = `translateY(${-4 * activeJump.height * progress * (1 - progress)}px)`;
-      if (progress >= 1) {
+      const hasTakenOff = now >= activeJump.takeoffAt;
+      const progress = hasTakenOff
+        ? Math.min((now - activeJump.takeoffAt) / (activeJump.duration * 1000), 1)
+        : 0;
+      hero.style.transform = hasTakenOff
+        ? `translateY(${-4 * activeJump.height * progress * (1 - progress)}px)`
+        : "";
+      if (hasTakenOff && progress >= 1) {
         landedJump = activeJump;
         jump = null;
         hero.classList.remove("jumping");
