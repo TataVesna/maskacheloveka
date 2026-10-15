@@ -1,6 +1,6 @@
 /* Встреча с ведьмой на выходе из пещеры.
    Герой останавливается, камера приближается, появляется бабл ведьмы.
-   По клику/тапу на бабл камера отдаляется и бег продолжается. */
+   По клику/тапу в любом месте экрана камера отдаляется и бег продолжается. */
 (() => {
   const witch = document.createElement("img");
   witch.id = "witch-midpoint";
@@ -19,14 +19,13 @@
 
   const bubble = document.createElement("img");
   bubble.id = "witch-bubble";
-  bubble.src = "assets/Бабл_Бабки.png";
+  bubble.src = "assets/UI/Бабл_Бабки.png";
   bubble.alt = "Реплика ведьмы";
   bubble.style.position = "absolute";
   bubble.style.height = "auto";
   bubble.style.zIndex = "12";
   bubble.style.opacity = "0";
   bubble.style.pointerEvents = "none";
-  bubble.style.cursor = "default";
   bubble.style.userSelect = "none";
   bubble.style.webkitUserDrag = "none";
   bubble.style.transition = "opacity 420ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1)";
@@ -58,12 +57,6 @@
   let waitingForInteraction = false;
   let completed = false;
   const zoomDuration = 850;
-
-  function setBubbleInteractive(enabled) {
-    waitingForInteraction = enabled;
-    bubble.style.pointerEvents = enabled ? "auto" : "none";
-    bubble.style.cursor = enabled ? "pointer" : "default";
-  }
 
   function showBubble() {
     positionWitchAndBubble();
@@ -104,7 +97,7 @@
     });
 
     window.setTimeout(() => {
-      if (!completed) setBubbleInteractive(true);
+      if (!completed) waitingForInteraction = true;
     }, zoomDuration);
   }
 
@@ -114,7 +107,7 @@
     event?.stopPropagation?.();
 
     completed = true;
-    setBubbleInteractive(false);
+    waitingForInteraction = false;
     hideBubble();
     game.style.transform = "scale(1)";
 
@@ -129,8 +122,8 @@
     }, zoomDuration);
   }
 
-  bubble.addEventListener("pointerdown", continueAfterWitch);
-  bubble.addEventListener("click", continueAfterWitch);
+  /* Продолжение — по клику/тапу в любом месте экрана, а не только по баблу. */
+  game.addEventListener("pointerdown", continueAfterWitch);
 
   function watchWitch() {
     if (!triggered && !completed && gameStarted && running && !tutorialActive) {
