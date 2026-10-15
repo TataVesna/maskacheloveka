@@ -52,8 +52,6 @@ const obstacleTypes = [
     mode: "ravine",
     indicatorForm: "bear",
     width: "63vw",
-    bottom: "20.1dvh",
-    transform: "translate(-50%, 60%)",
     zIndex: "4",
     hintTop: "61vh",
     gapFactor: 0.15
@@ -69,8 +67,6 @@ const obstacleTypes = [
     form: "bear",
     indicatorForm: "bear",
     width: "clamp(460px, 55vw, 860px)",
-    bottom: "15.8dvh",
-    transform: "translate(-50%, 68%)",
     zIndex: "4",
     hintTop: "68vh"
   },
@@ -85,8 +81,6 @@ const obstacleTypes = [
     form: "human",
     indicatorForm: "human",
     width: "clamp(520px, 48vw, 780px)",
-    bottom: "18.5dvh",
-    transform: "translate(-50%, 48%)",
     zIndex: "4",
     hintTop: "60vh"
   },
@@ -101,7 +95,6 @@ const obstacleTypes = [
     form: "human",
     indicatorForm: "human",
     width: "clamp(720px, 145vh, 1600px)",
-    bottom: "8.8dvh",
     zIndex: "4",
     hintTop: "31vh"
   },
@@ -115,7 +108,6 @@ const obstacleTypes = [
     mode: "bear-jump",
     indicatorForm: "bear",
     width: "22.1vw",
-    bottom: "10.5dvh",
     zIndex: "4",
     hintTop: "35vh",
     gapFactor: 0.47
@@ -130,7 +122,6 @@ const obstacleTypes = [
     mode: "any-jump",
     indicatorForm: null,
     width: "clamp(120px, 13vw, 210px)",
-    bottom: "12.5dvh",
     zIndex: "4",
     hintTop: "40vh",
     gapFactor: 0.44
@@ -146,7 +137,6 @@ const obstacleTypes = [
     form: "human",
     indicatorForm: "human",
     width: "clamp(240px, 22vw, 360px)",
-    bottom: "10.8dvh",
     zIndex: "4",
     hintTop: "43vh"
   }
@@ -182,6 +172,56 @@ function applyObstacleStyle(element, type) {
   element.style.bottom = "var(--run-line-bottom)";
   element.style.transform = "translateX(-50%)";
   if (type.zIndex) element.style.zIndex = type.zIndex;
+}
+
+function alignObstacleVisibleBottom(element) {
+  const align = () => {
+    if (!element.naturalWidth || !element.naturalHeight || !element.isConnected) return;
+
+    try {
+      const maxSampleSize = 320;
+      const sampleScale = Math.min(
+        1,
+        maxSampleSize / element.naturalWidth,
+        maxSampleSize / element.naturalHeight
+      );
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(element.naturalWidth * sampleScale));
+      canvas.height = Math.max(1, Math.round(element.naturalHeight * sampleScale));
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(element, 0, 0, canvas.width, canvas.height);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+      let lastVisibleRow = -1;
+      rowSearch:
+      for (let y = canvas.height - 1; y >= 0; y--) {
+        for (let x = 0; x < canvas.width; x++) {
+          if (pixels[(y * canvas.width + x) * 4 + 3] > 12) {
+            lastVisibleRow = y;
+            break rowSearch;
+          }
+        }
+      }
+
+      if (lastVisibleRow < 0) return;
+
+      const transparentRowsBelow = canvas.height - 1 - lastVisibleRow;
+      const renderedHeight = element.getBoundingClientRect().height;
+      const downwardShift = renderedHeight * (transparentRowsBelow / canvas.height);
+      element.style.transform = `translate(-50%, ${downwardShift}px)`;
+    } catch (error) {
+      element.style.transform = "translateX(-50%)";
+    }
+  };
+
+  if (element.complete && element.naturalWidth) {
+    requestAnimationFrame(align);
+  } else {
+    element.addEventListener("load", () => requestAnimationFrame(align), { once: true });
+  }
 }
 
 function placeObstacles() {
@@ -245,6 +285,7 @@ function placeObstacles() {
     img.style.left = `${x}px`;
     applyObstacleStyle(img, item.type);
     world.appendChild(img);
+    alignObstacleVisibleBottom(img);
 
     const hint = document.createElement("div");
     hint.className = `obstacle-hint obstacle-hint--${item.type.id}`;
