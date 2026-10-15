@@ -1,7 +1,5 @@
-/* Покадровая анимация прыжка только для медведя.
-   У человека во время прыжка остаётся обычный актуальный кадр бега.
-   Для человека немного увеличены высота и длительность прыжка,
-   чтобы пень стабильно проходился в обоих обликах. */
+/* Во время прыжка у обоих обликов остаётся обычный кадр бега.
+   Физика прыжка сохраняется: меняются только визуальные кадры. */
 
 updateHeroAnimation = function (now) {
   if (hero.classList.contains("falling")) return;
@@ -9,30 +7,7 @@ updateHeroAnimation = function (now) {
   const form = hero.dataset.form;
 
   if (jump && hero.classList.contains("jumping")) {
-    if (form === "human") {
-      setHeroSpriteFrame("human", "run", 0);
-      return;
-    }
-
-    const jumpFrames = spriteFrames.bear.jump;
-
-    if (now < jump.takeoffAt) {
-      setHeroSpriteFrame("bear", "jump", 0);
-      return;
-    }
-
-    const progress = Math.max(
-      0,
-      Math.min((now - jump.takeoffAt) / (jump.duration * 1000), 1)
-    );
-
-    let frameIndex = 0;
-    if (progress >= 0.22 && progress < 0.5) frameIndex = 1;
-    else if (progress >= 0.5 && progress < 0.76) frameIndex = 2;
-    else if (progress >= 0.76) frameIndex = 3;
-
-    frameIndex = Math.min(frameIndex, jumpFrames.length - 1);
-    setHeroSpriteFrame("bear", "jump", frameIndex);
+    setHeroSpriteFrame(form, "run", 0);
     return;
   }
 
