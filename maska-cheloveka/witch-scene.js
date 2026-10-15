@@ -74,6 +74,10 @@
 
     game.style.transform = "scale(1)";
 
+    /* После встречи активируем второй чекпоинт чуть впереди ведьмы,
+       чтобы при возрождении герой не оказался внутри соседнего препятствия. */
+    window.activateWitchCheckpoint?.(witchRoutePosition + 0.1);
+
     /* Сначала камера возвращается, только затем герой продолжает бег. */
     window.setTimeout(() => {
       hero.classList.remove("witch-paused");
