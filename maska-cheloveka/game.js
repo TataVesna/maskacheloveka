@@ -179,8 +179,8 @@ function shuffle(items) {
 
 function applyObstacleStyle(element, type) {
   if (type.width) element.style.width = type.width;
-  if (type.bottom) element.style.bottom = type.bottom;
-  if (type.transform) element.style.transform = type.transform;
+  element.style.bottom = "var(--run-line-bottom)";
+  element.style.transform = "translateX(-50%)";
   if (type.zIndex) element.style.zIndex = type.zIndex;
 }
 
@@ -228,7 +228,7 @@ function placeObstacles() {
         : "Синий куст: дальше нужен человек";
       indicator.style.position = "absolute";
       indicator.style.left = `${x - Math.min(innerWidth * 0.22, locationWidth * 0.1)}px`;
-      indicator.style.bottom = "12dvh";
+      indicator.style.bottom = "var(--run-line-bottom)";
       indicator.style.width = "clamp(120px, 12vw, 200px)";
       indicator.style.height = "auto";
       indicator.style.transform = "translateX(-50%)";
@@ -301,6 +301,11 @@ function updateHeroAnimation(now) {
 
   const form = hero.dataset.form;
   if (jump && hero.classList.contains("jumping")) {
+    if (form === "human") {
+      setHeroSpriteFrame("human", "run", 0);
+      return;
+    }
+
     const progress = Math.max(0, Math.min((now - jump.takeoffAt) / (jump.duration * 1000), 1));
     const frameIndex = now < jump.takeoffAt
       ? 0
