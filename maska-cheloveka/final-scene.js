@@ -1,14 +1,12 @@
 /* Финальная сцена в чуме невесты.
-   При входе на последний экран герой плавно замедляется,
-   затем поверх игры появляется финальная иллюстрация.
+   Сначала панорама доезжает до самого конца и замирает.
+   Затем герой продолжает бежать вправо уже по неподвижному фону.
+   Только у правого края экран затемняется и проявляются глаза невесты.
    По клику/тапу на глаза открывается экран результата. */
 (() => {
-  const LOCATION_ASPECT = 3000 / 1080;
-  const FINAL_SCENE_INDEX = 10; // bride-chum — 11-й экран, индекс 10
-  const TRIGGER_FRACTION = 0.04;
-  const SLOWDOWN_DURATION = 1400;
-  const REVEAL_DELAY = 700;
   const REVEAL_DURATION = 1200;
+  const DARKEN_DURATION = 500;
+  const RIGHT_EDGE_PADDING = 18;
 
   let triggered = false;
   let finalImageReady = false;
@@ -23,12 +21,12 @@
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "#000",
-    opacity: "0",
+    background: "rgba(0, 0, 0, 0)",
+    opacity: "1",
     visibility: "hidden",
     pointerEvents: "none",
     cursor: "pointer",
-    transition: `opacity ${REVEAL_DURATION}ms ease, visibility ${REVEAL_DURATION}ms ease`
+    transition: `background ${DARKEN_DURATION}ms ease, visibility ${DARKEN_DURATION}ms ease`
   });
 
   const image = document.createElement("img");
@@ -50,21 +48,17 @@
   overlay.appendChild(image);
   game.appendChild(overlay);
 
-  function currentLocationWidth() {
-    return innerHeight * LOCATION_ASPECT;
-  }
-
   function revealFinalImage() {
     overlay.style.visibility = "visible";
-    overlay.style.pointerEvents = "auto";
-    finalImageReady = true;
+    overlay.style.background = "rgba(0, 0, 0, 1)";
 
-    requestAnimationFrame(() => {
-      overlay.style.opacity = "1";
+    window.setTimeout(() => {
+      finalImageReady = true;
+      overlay.style.pointerEvents = "auto";
       image.style.opacity = "1";
       image.style.transform = "scale(1)";
       image.style.filter = "blur(0px)";
-    });
+    }, DARKEN_DURATION * 0.65);
   }
 
   function showWinScreen(event) {
@@ -76,7 +70,6 @@
     jump = null;
     wading = null;
     overlay.style.pointerEvents = "none";
-    overlay.style.opacity = "0";
     overlay.style.visibility = "hidden";
 
     window.showResultScreen?.("win");
@@ -84,49 +77,51 @@
 
   overlay.addEventListener("pointerdown", showWinScreen);
 
-  function startFinalScene() {
+  function runHeroToRightEdge() {
     if (triggered) return;
     triggered = true;
     window.finalSequenceActive = true;
 
-    const startingSpeed = Number(speedSlider.value) || 1.5;
-    const minimumSpeed = Math.min(startingSpeed, 0.45);
+    /* Фон уже дошёл до конца — фиксируем его и продолжаем только бег героя. */
+    running = false;
+    jump = null;
+    wading = null;
+    hero.classList.remove("jumping", "wading", "witch-paused");
+    hero.classList.add("running");
+    hero.style.transform = "";
+
+    const startLeft = hero.offsetLeft;
+    const targetLeft = Math.max(startLeft, innerWidth - hero.offsetWidth - RIGHT_EDGE_PADDING);
+    const distance = Math.max(0, targetLeft - startLeft);
+    const currentSpeed = Math.max(1, Number(speedSlider.value) || 1.5);
+    const pixelsPerSecond = innerWidth * 0.21 * currentSpeed;
+    const duration = Math.max(900, distance / pixelsPerSecond * 1000);
     const startedAt = performance.now();
 
-    window.setTimeout(revealFinalImage, REVEAL_DELAY);
-
-    function slowDown(now) {
-      const progress = Math.max(0, Math.min((now - startedAt) / SLOWDOWN_DURATION, 1));
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const speed = startingSpeed + (minimumSpeed - startingSpeed) * eased;
-
-      speedSlider.value = String(Math.max(0.4, speed));
-      speedValue.value = `${Number(speedSlider.value).toFixed(1)}×`;
-      speedValue.textContent = speedValue.value;
+    function moveHero(now) {
+      const progress = Math.max(0, Math.min((now - startedAt) / duration, 1));
+      const left = startLeft + distance * progress;
+      hero.style.left = `${left}px`;
+      updateHeroAnimation(now);
 
       if (progress < 1) {
-        requestAnimationFrame(slowDown);
+        requestAnimationFrame(moveHero);
         return;
       }
 
-      running = false;
-      jump = null;
-      wading = null;
-      hero.classList.remove("jumping", "wading");
-      hero.classList.add("running");
-      hero.style.transform = "";
+      /* Герой дошёл до правого края: затемняем фон и только потом проявляем глаза. */
+      revealFinalImage();
     }
 
-    requestAnimationFrame(slowDown);
+    requestAnimationFrame(moveHero);
   }
 
   function watchFinalScene() {
-    if (!triggered && gameStarted && running && !tutorialActive) {
-      const location = currentLocationWidth();
-      const triggerX = location * (FINAL_SCENE_INDEX + TRIGGER_FRACTION);
-      const heroCenter = worldX + heroScreenX();
+    if (!triggered && gameStarted && !tutorialActive) {
+      const maxScroll = Math.max(0, world.scrollWidth - game.clientWidth);
+      const backgroundAtEnd = maxScroll > 0 && worldX >= maxScroll - 1;
 
-      if (heroCenter >= triggerX) startFinalScene();
+      if (backgroundAtEnd) runHeroToRightEdge();
     }
 
     if (!triggered) requestAnimationFrame(watchFinalScene);
