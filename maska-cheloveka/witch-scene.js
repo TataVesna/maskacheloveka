@@ -1,6 +1,6 @@
 /* Встреча с ведьмой на выходе из пещеры.
-   Герой останавливается, камера приближается, затем игрок кликает/тапает по ведьме.
-   Позже вместо самой ведьмы сюда можно подключить отдельное интерактивное изображение. */
+   Герой останавливается, камера приближается, появляется бабл ведьмы.
+   По клику/тапу на бабл камера отдаляется и бег продолжается. */
 (() => {
   const witch = document.createElement("img");
   witch.id = "witch-midpoint";
@@ -17,22 +17,65 @@
   witch.style.webkitUserDrag = "none";
   world.appendChild(witch);
 
+  const bubble = document.createElement("img");
+  bubble.id = "witch-bubble";
+  bubble.src = "assets/Бабл_Бабки.png";
+  bubble.alt = "Реплика ведьмы";
+  bubble.style.position = "absolute";
+  bubble.style.height = "auto";
+  bubble.style.zIndex = "12";
+  bubble.style.opacity = "0";
+  bubble.style.pointerEvents = "none";
+  bubble.style.cursor = "default";
+  bubble.style.userSelect = "none";
+  bubble.style.webkitUserDrag = "none";
+  bubble.style.transition = "opacity 420ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1)";
+  world.appendChild(bubble);
+
   /* Правый край последнего экрана пещеры (mound-end), с небольшим запасом от стыка. */
   const witchRoutePosition = 6.86;
   const currentLocationWidth = () => innerHeight * (3000 / 1080);
   const currentWitchX = () => currentLocationWidth() * witchRoutePosition;
-  witch.style.left = `${currentWitchX()}px`;
-  witch.dataset.logicalX = String(witchRoutePosition);
+  const sceneScale = () => innerHeight / 1080;
+
+  function positionWitchAndBubble() {
+    const scale = sceneScale();
+    const witchX = currentWitchX();
+
+    witch.style.left = `${witchX}px`;
+    witch.dataset.logicalX = String(witchRoutePosition);
+
+    /* Бабл — справа и немного выше ведьмы. */
+    bubble.style.left = `${witchX + 205 * scale}px`;
+    bubble.style.bottom = `calc(var(--run-line-bottom) + ${95 * scale}px)`;
+    bubble.style.width = `${300 * scale}px`;
+    bubble.style.transform = `translate(-50%, ${18 * scale}px) scale(0.96)`;
+  }
+
+  positionWitchAndBubble();
 
   let triggered = false;
   let waitingForInteraction = false;
   let completed = false;
   const zoomDuration = 850;
 
-  function setWitchInteractive(enabled) {
+  function setBubbleInteractive(enabled) {
     waitingForInteraction = enabled;
-    witch.style.pointerEvents = enabled ? "auto" : "none";
-    witch.style.cursor = enabled ? "pointer" : "default";
+    bubble.style.pointerEvents = enabled ? "auto" : "none";
+    bubble.style.cursor = enabled ? "pointer" : "default";
+  }
+
+  function showBubble() {
+    positionWitchAndBubble();
+    requestAnimationFrame(() => {
+      bubble.style.opacity = "1";
+      bubble.style.transform = "translate(-50%, 0) scale(1)";
+    });
+  }
+
+  function hideBubble() {
+    bubble.style.opacity = "0";
+    bubble.style.transform = `translate(-50%, ${12 * sceneScale()}px) scale(0.97)`;
   }
 
   function triggerWitchScene() {
@@ -54,12 +97,15 @@
     game.style.transformOrigin = `${focusX}px 72%`;
     game.style.transition = `transform ${zoomDuration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
 
+    /* Бабл появляется одновременно с приближением камеры. */
+    showBubble();
+
     requestAnimationFrame(() => {
       game.style.transform = "scale(1.42)";
     });
 
     window.setTimeout(() => {
-      if (!completed) setWitchInteractive(true);
+      if (!completed) setBubbleInteractive(true);
     }, zoomDuration);
   }
 
@@ -69,7 +115,8 @@
     event?.stopPropagation?.();
 
     completed = true;
-    setWitchInteractive(false);
+    setBubbleInteractive(false);
+    hideBubble();
     game.style.transform = "scale(1)";
 
     /* Чекпоинт ставим сразу после ведьмы, но до первого препятствия следующей локации. */
@@ -83,8 +130,8 @@
     }, zoomDuration);
   }
 
-  witch.addEventListener("pointerdown", continueAfterWitch);
-  witch.addEventListener("click", continueAfterWitch);
+  bubble.addEventListener("pointerdown", continueAfterWitch);
+  bubble.addEventListener("click", continueAfterWitch);
 
   function watchWitch() {
     if (!triggered && !completed && gameStarted && running && !tutorialActive) {
@@ -95,5 +142,6 @@
     requestAnimationFrame(watchWitch);
   }
 
+  window.addEventListener("resize", positionWitchAndBubble);
   requestAnimationFrame(watchWitch);
 })();
