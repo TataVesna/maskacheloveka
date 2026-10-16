@@ -49,6 +49,7 @@
   };
 
   const normalScenes = [...world.querySelectorAll(".location-scene")];
+  const normalMoundFronts = [...world.querySelectorAll(".mound-front-overlay")];
   const normalObstacles = obstacles.slice();
   const witch = document.getElementById("witch-midpoint");
   const witchBubble = document.getElementById("witch-bubble");
@@ -72,6 +73,7 @@
   let endlessActive = false;
   let endlessScenes = [];
   let endlessObstacleNodes = [];
+  let endlessOverlayNodes = [];
   let generatedSceneCount = 0;
   let sceneQueue = [];
   let lastGroupName = null;
@@ -103,6 +105,7 @@
 
   function appendScene() {
     const spec = nextSceneSpec();
+    const sceneIndex = generatedSceneCount;
     const section = document.createElement("section");
     section.className = "location-scene endless-location-scene";
     section.setAttribute("aria-hidden", "true");
@@ -110,20 +113,12 @@
     if (spec.type === "mound") {
       section.classList.add("location-scene--mound");
 
-      /* Курган собирается из двух PNG разной высоты.
-         Нижний слой сохраняет пропорции и прижимается к низу,
-         верхний — сохраняет пропорции и лежит над препятствиями. */
+      /* Нижний слой кургана остаётся внутри flex-секции. */
       const back = document.createElement("img");
       back.className = "mound-layer mound-layer--back";
       back.src = spec.back;
       back.alt = "";
       section.appendChild(back);
-
-      const front = document.createElement("img");
-      front.className = "mound-layer mound-layer--front";
-      front.src = spec.front;
-      front.alt = "";
-      section.appendChild(front);
     } else {
       const img = document.createElement("img");
       img.src = spec.src;
@@ -133,8 +128,20 @@
 
     world.appendChild(section);
 
+    /* Верхний слой кургана — отдельный абсолютный элемент в #world.
+       Это гарантирует реальный порядок: back -> препятствия -> front. */
+    if (spec.type === "mound") {
+      const front = document.createElement("img");
+      front.className = "mound-front-overlay endless-mound-front-overlay";
+      front.src = spec.front;
+      front.alt = "";
+      front.style.left = `${sceneIndex * currentLocationWidth()}px`;
+      world.appendChild(front);
+      endlessOverlayNodes.push(front);
+    }
+
     endlessScenes.push(section);
-    const sceneIndex = generatedSceneCount++;
+    generatedSceneCount += 1;
     addObstaclesForScene(sceneIndex);
   }
 
@@ -195,8 +202,6 @@
   function addObstaclesForScene(sceneIndex) {
     if (sceneIndex < SAFE_START_SCENES || !allIds.length) return;
 
-    /* После первого спокойного экрана на каждом экране есть минимум одно препятствие.
-       Примерно в 60% случаев добавляем второе, но не ставим два прыжка подряд. */
     placeObstacleAt(sceneIndex, 0.31 + Math.random() * 0.08);
 
     if (Math.random() < 0.60) {
@@ -207,14 +212,21 @@
   function clearEndlessContent() {
     endlessScenes.forEach((scene) => scene.remove());
     endlessObstacleNodes.forEach((node) => node.remove());
+    endlessOverlayNodes.forEach((node) => node.remove());
     endlessScenes = [];
     endlessObstacleNodes = [];
+    endlessOverlayNodes = [];
   }
 
   function hideNormalContent() {
     normalScenes.forEach((scene) => {
       scene.dataset.endlessPrevDisplay = scene.style.display || "";
       scene.style.display = "none";
+    });
+
+    normalMoundFronts.forEach((front) => {
+      front.dataset.endlessPrevDisplay = front.style.display || "";
+      front.style.display = "none";
     });
 
     normalObstacles.forEach((obstacle) => {
@@ -236,6 +248,11 @@
     normalScenes.forEach((scene) => {
       scene.style.display = scene.dataset.endlessPrevDisplay || "";
       delete scene.dataset.endlessPrevDisplay;
+    });
+
+    normalMoundFronts.forEach((front) => {
+      front.style.display = front.dataset.endlessPrevDisplay || "";
+      delete front.dataset.endlessPrevDisplay;
     });
 
     normalObstacles.forEach((obstacle) => {
