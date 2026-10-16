@@ -11,9 +11,20 @@
 
   const caveCenterSegment = 4;
 
+  const updatedAssets = {
+    "cave-low-passage": "assets/obstacles/ПЗ_Низкий проход (1).png",
+    "cave-wall": "assets/obstacles/ПЗ_Стена (1).png"
+  };
+
   for (const obstacle of obstacles) {
     const fraction = caveFractions[obstacle.id];
     if (fraction == null) continue;
+
+    const updatedSrc = updatedAssets[obstacle.id];
+    if (updatedSrc) {
+      obstacle.src = updatedSrc;
+      obstacle.element.src = updatedSrc;
+    }
 
     const x = locationWidth * (1 + caveCenterSegment + fraction);
     obstacle.x = x;
