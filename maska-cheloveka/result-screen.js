@@ -108,6 +108,9 @@
   }
 
   function currentDistanceMeters(result) {
+    if (window.infiniteMode && typeof window.getEndlessDistanceMeters === "function") {
+      return window.getEndlessDistanceMeters();
+    }
     if (result === "win") return ROUTE_METERS;
     const maxScroll = Math.max(1, world.scrollWidth - game.clientWidth);
     const progress = Math.max(0, Math.min(1, worldX / maxScroll));
