@@ -16,7 +16,7 @@
     opacity: "0",
     visibility: "hidden",
     pointerEvents: "none",
-    transition: "opacity 420ms ease, visibility 420ms ease",
+    transition: "opacity 180ms ease, visibility 180ms ease",
     overflow: "hidden"
   });
 
@@ -250,7 +250,7 @@
   };
 
   /* До ведьмы поражение показывает экран результата.
-     После ведьмы — короткое падение и мгновенный рестарт от чекпоинта. */
+     После ведьмы — очень короткое затемнение и быстрый рестарт от чекпоинта. */
   failRun = function failRunWithCheckpointAwareResult() {
     if (!running || window.finalSequenceActive) return;
 
@@ -269,6 +269,6 @@
       }
 
       window.showResultScreen("loss");
-    }, 520);
+    }, 240);
   };
 })();
