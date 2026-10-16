@@ -8,14 +8,15 @@
 }
 
 .tutorial-card {
-  width: min(920px, 88vw) !important;
-  padding: clamp(12px, 1.8vw, 24px) clamp(18px, 2.4vw, 34px) !important;
+  width: min(1040px, 96vw) !important;
+  padding: clamp(8px, 1vw, 16px) clamp(12px, 1.5vw, 22px) !important;
   border: 0 !important;
   background: transparent !important;
   color: #000 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   text-shadow: none !important;
+  transform: translateX(55px);
 }
 
 .tutorial-title,
@@ -25,11 +26,17 @@
 }
 
 .tutorial-title {
-  font-size: clamp(28px, 3vw, 46px) !important;
+  font-size: clamp(32px, 3.8vw, 58px) !important;
+}
+
+.tutorial-controls {
+  gap: clamp(28px, 5vw, 72px) !important;
 }
 
 .tutorial-gesture-label {
-  font-size: clamp(18px, 1.8vw, 27px) !important;
+  font-size: clamp(28px, 3vw, 46px) !important;
+  line-height: 1.05 !important;
+  font-weight: 700 !important;
 }
 
 .tutorial-continue {
@@ -37,27 +44,27 @@
 }
 
 .tutorial-gesture-icon-wrap {
-  width: 132px !important;
-  height: 166px !important;
+  width: 180px !important;
+  height: 205px !important;
 }
 
 .tutorial-gesture-icon {
-  max-width: 108px !important;
-  max-height: 108px !important;
+  max-width: 158px !important;
+  max-height: 158px !important;
 }
 
 .tutorial-gesture-icon-wrap--desktop {
-  width: 210px !important;
-  height: 150px !important;
+  width: 280px !important;
+  height: 190px !important;
 }
 
 .tutorial-gesture-icon--desktop {
-  max-width: 190px !important;
-  max-height: 132px !important;
+  max-width: 255px !important;
+  max-height: 178px !important;
 }
 
 .tutorial-gesture-card--desktop {
-  min-width: 220px !important;
+  min-width: 275px !important;
 }
 
 #tutorial-overlay.is-lingering {
@@ -66,14 +73,29 @@
 
 @media (pointer: coarse) {
   .tutorial-card {
-    width: min(760px, 94vw) !important;
+    width: min(900px, 98vw) !important;
+    transform: translateX(32px);
   }
 
   .tutorial-controls--touch {
-    gap: clamp(26px, 8vw, 72px) !important;
+    gap: clamp(34px, 9vw, 86px) !important;
   }
 
   .tutorial-gesture-card {
-    min-width: 170px !important;
+    min-width: 205px !important;
+  }
+
+  .tutorial-gesture-icon-wrap {
+    width: 190px !important;
+    height: 215px !important;
+  }
+
+  .tutorial-gesture-icon {
+    max-width: 168px !important;
+    max-height: 168px !important;
+  }
+
+  .tutorial-gesture-label {
+    font-size: clamp(26px, 4vw, 42px) !important;
   }
 }
