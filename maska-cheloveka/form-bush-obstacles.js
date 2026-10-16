@@ -1,29 +1,30 @@
-/* Красные и синие кусты — самостоятельные препятствия.
-   Синие проходит только человек, красные — только медведь.
-   В пещере кусты становятся прыжковыми препятствиями.
-   Пень нужно перепрыгивать только человеком. */
+/* Красные и синие кусты — прыжковые препятствия по всему маршруту.
+   Синие нужно перепрыгивать человеком, красные — медведем.
+   Пень также нужно перепрыгивать только человеком. */
 (() => {
   const bushTypes = {
     human: {
       id: "blue-bush",
       src: "assets/obstacles/human-indicator-bush.png",
       className: "obstacle--blue-bush",
-      alt: "Синий куст: пройти может только человек",
-      rule: "Синий куст проходит только человек.",
-      mode: "ground",
+      alt: "Синий куст: перепрыгнуть человеком",
+      rule: "Синий куст нужно перепрыгнуть человеком.",
+      mode: "any-jump",
       form: "human",
       indicatorForm: null,
+      gapFactor: 0.24,
       zIndex: "5"
     },
     bear: {
       id: "red-bush",
       src: "assets/obstacles/bear-indicator-bush.png",
       className: "obstacle--red-bush",
-      alt: "Красный куст: пройти может только медведь",
-      rule: "Красный куст проходит только медведь.",
-      mode: "ground",
+      alt: "Красный куст: перепрыгнуть медведем",
+      rule: "Красный куст нужно перепрыгнуть медведем.",
+      mode: "any-jump",
       form: "bear",
       indicatorForm: null,
+      gapFactor: 0.24,
       zIndex: "5"
     },
     humanJump: {
@@ -62,7 +63,6 @@
     { type: bushTypes.human, segment: 2, fraction: 0.34 },
     { type: bushTypes.bear, segment: 2, fraction: 0.68 },
 
-    /* В пещере кусты требуют прыжка соответствующим обликом. */
     { type: bushTypes.humanJump, segment: 3, fraction: 0.35 },
     { type: bushTypes.bearJump, segment: 5, fraction: 0.32 },
 
@@ -104,8 +104,8 @@
     });
   });
 
-  /* Для прыжковых препятствий дополнительно проверяем нужный облик.
-     Базовая логика game.js после этого проверит сам факт и длину прыжка. */
+  /* Для всех кустов дополнительно проверяем правильный облик.
+     Базовая логика game.js проверяет сам факт и длину прыжка. */
   const originalUpdateObstacleCollisions = updateObstacleCollisions;
 
   updateObstacleCollisions = function (previousCenter, center, now, speed, landedJump = null) {
@@ -113,8 +113,13 @@
       if (obstacle.crossed) continue;
 
       const isStump = obstacle.id === "stump";
-      const isCaveBush = obstacle.id === "cave-blue-bush" || obstacle.id === "cave-red-bush";
-      if (!isStump && !isCaveBush) continue;
+      const isBush = [
+        "blue-bush",
+        "red-bush",
+        "cave-blue-bush",
+        "cave-red-bush"
+      ].includes(obstacle.id);
+      if (!isStump && !isBush) continue;
 
       const halfGap = obstacle.element.offsetWidth * (obstacle.gapFactor ?? 0.4);
       const gapStart = obstacle.x - halfGap;
