@@ -1,5 +1,7 @@
 /* Во время брода медведь может прыгать; человек всегда проигрывает.
-   Для препятствий с требуемым обликом прыжок сам по себе больше не считается ошибкой. */
+   Для препятствий с требуемым обликом прыжок сам по себе больше не считается ошибкой.
+   Облик для прыжкового препятствия фиксируется в момент входа в зону препятствия,
+   поэтому смена облика уже в воздухе не приводит к проигрышу. */
 updateObstacleCollisions = function (previousCenter, center, now, speed, landedJump = null) {
   const airborneJump = jump && now >= jump.takeoffAt ? jump : null;
 
@@ -73,21 +75,33 @@ updateObstacleCollisions = function (previousCenter, center, now, speed, landedJ
           return true;
         }
         obstacle.attemptJump = enteringJump;
+        /* Запоминаем правильность облика в момент входа на препятствие.
+           Дальнейшая смена формы в воздухе разрешена. */
+        obstacle.entryForm = hero.dataset.form;
       }
 
       if (obstacle.inside && landedJump === obstacle.attemptJump) {
-        const jumpMatches = obstacle.mode === "any-jump"
-          ? obstacle.attemptJump && hero.dataset.form === obstacle.attemptJump.form
-          : obstacle.attemptJump?.form === "bear" && hero.dataset.form === "bear";
+        let requiredForm = null;
 
+        if (obstacle.mode === "ravine" || obstacle.mode === "bear-jump") {
+          requiredForm = "bear";
+        } else if (obstacle.mode === "any-jump") {
+          if (obstacle.id === "stump") requiredForm = "human";
+          else requiredForm = obstacle.form ?? null;
+        }
+
+        const jumpMatches = obstacle.attemptJump && (!requiredForm || obstacle.entryForm === requiredForm);
         const cleared = center >= gapEnd && jumpMatches;
+
         if (!cleared) {
           failRun();
           return true;
         }
+
         obstacle.inside = false;
         obstacle.crossed = true;
         obstacle.attemptJump = null;
+        obstacle.entryForm = null;
       }
       continue;
     }
