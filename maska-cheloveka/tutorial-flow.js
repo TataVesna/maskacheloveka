@@ -1,13 +1,13 @@
-/* Непрерывающий туториал: подсказка появляется поверх игры,
+/* Непрерывающий туториал: подсказка появляется через секунду после старта,
    не останавливает героя и остаётся до прохождения первого препятствия. */
 (() => {
-  /* Показываем заметно раньше, но не прямо в момент старта. */
-  const TRIGGER_X = locationWidth * 0.38;
+  const TUTORIAL_DELAY_MS = 1000;
   const continueHint = tutorialOverlay.querySelector('.tutorial-continue');
 
   let tutorialStarted = false;
   let tutorialVisible = false;
   let firstObstacle = null;
+  let runStartedAt = null;
 
   /* Полностью отключаем старый триггер из game.js, который ставил игру на паузу. */
   tutorialShown = true;
@@ -49,6 +49,7 @@
     tutorialStarted = false;
     tutorialVisible = false;
     firstObstacle = null;
+    runStartedAt = performance.now();
     tutorialShown = true;
     tutorialActive = false;
     tutorialOverlay.classList.add('is-hidden');
@@ -67,28 +68,30 @@
   resetRun = function resetRunWithTutorialState() {
     originalResetRun();
 
-    /* При полном новом прохождении resetRun возвращает мир к началу —
-       тогда туториал снова разрешён. При респавне от ведьмы worldX уже
-       устанавливается на чекпоинт, поэтому обучение повторно не всплывает. */
+    /* Полное прохождение начинается от начала маршрута: туториал запускается
+       заново через секунду. При респавне от ведьмы подсказку не показываем. */
     const isFullRunFromStart = worldX < locationWidth * 0.08;
     if (isFullRunFromStart) {
       prepareTutorialForNewRun();
       return;
     }
 
+    runStartedAt = null;
     tutorialShown = true;
     tutorialActive = false;
+    tutorialVisible = false;
     tutorialOverlay.classList.add('is-hidden');
     tutorialOverlay.classList.remove('is-lingering');
     tutorialOverlay.style.pointerEvents = 'none';
     tutorialOverlay.setAttribute('aria-hidden', 'true');
   };
 
-  function updateTutorialFlow() {
+  function updateTutorialFlow(now) {
     if (gameStarted && !tutorialStarted) {
       tutorialShown = true;
-      const center = worldX + heroScreenX();
-      if (running && center >= TRIGGER_X) {
+      if (runStartedAt === null) runStartedAt = now;
+
+      if (running && now - runStartedAt >= TUTORIAL_DELAY_MS) {
         showTutorialWhileRunning();
       }
     }
