@@ -1,6 +1,9 @@
 /* Красные и синие кусты — прыжковые препятствия по всему маршруту.
    Синие нужно перепрыгивать человеком, красные — медведем.
-   Пень также нужно перепрыгивать только человеком. */
+   Пень также нужно перепрыгивать только человеком.
+
+   Все прыжковые препятствия разведены по маршруту так, чтобы после
+   приземления игрок успевал сменить облик и начать следующий прыжок. */
 (() => {
   const bushTypes = {
     human: {
@@ -53,30 +56,20 @@
     }
   };
 
-  /* Кусты ставятся между обычными препятствиями. Их становится больше ближе
-     к финалу, поэтому визуально и механически плотность маршрута растёт. */
+  /* Кусты чередуются по цвету и стоят с запасом относительно оврагов и пней.
+     Минимальный интервал между соседними прыжковыми препятствиями здесь
+     около 0.45 ширины локации — этого хватает даже на повышенной скорости. */
   const bushPlan = [
-    { type: bushTypes.human, segment: 0, fraction: 0.55 },
+    { type: bushTypes.human, segment: 0, fraction: 0.60 },
+    { type: bushTypes.bear, segment: 1, fraction: 0.32 },
+    { type: bushTypes.human, segment: 2, fraction: 0.38 },
 
-    { type: bushTypes.bear, segment: 1, fraction: 0.46 },
+    { type: bushTypes.bearJump, segment: 3, fraction: 0.35 },
+    { type: bushTypes.humanJump, segment: 5, fraction: 0.28 },
 
-    { type: bushTypes.human, segment: 2, fraction: 0.34 },
-    { type: bushTypes.bear, segment: 2, fraction: 0.68 },
-
-    { type: bushTypes.humanJump, segment: 3, fraction: 0.35 },
-    { type: bushTypes.bearJump, segment: 5, fraction: 0.32 },
-
-    { type: bushTypes.human, segment: 6, fraction: 0.34 },
-    { type: bushTypes.bear, segment: 6, fraction: 0.66 },
-
-    { type: bushTypes.human, segment: 7, fraction: 0.26 },
-    { type: bushTypes.bear, segment: 7, fraction: 0.50 },
-    { type: bushTypes.human, segment: 7, fraction: 0.74 },
-
-    { type: bushTypes.bear, segment: 8, fraction: 0.19 },
-    { type: bushTypes.human, segment: 8, fraction: 0.37 },
-    { type: bushTypes.bear, segment: 8, fraction: 0.55 },
-    { type: bushTypes.human, segment: 8, fraction: 0.73 }
+    { type: bushTypes.bear, segment: 6, fraction: 0.12 },
+    { type: bushTypes.human, segment: 7, fraction: 0.34 },
+    { type: bushTypes.bear, segment: 8, fraction: 0.28 }
   ];
 
   bushPlan.forEach((item) => {
