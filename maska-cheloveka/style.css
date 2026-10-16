@@ -81,6 +81,30 @@ body {
   user-select: none;
 }
 
+/* Курган собирается из двух PNG-слоёв.
+   Нижний слой лежит под препятствиями, верхний перекрывает верхушки колонн. */
+.location-scene--mound {
+  overflow: visible;
+}
+
+.location-scene--mound .scene-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.location-scene--mound .scene-layer--back {
+  z-index: 1;
+}
+
+.location-scene--mound .scene-layer--front {
+  z-index: 8;
+}
+
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
 
 #start-screen {
