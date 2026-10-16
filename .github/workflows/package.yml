@@ -1,0 +1,38 @@
+name: Build submission archive
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "maska-cheloveka/**"
+      - "README.md"
+      - ".github/workflows/package.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Prepare submission folder
+        run: |
+          mkdir -p submission
+          cp README.md submission/README.md
+          cp -R maska-cheloveka submission/maska-cheloveka
+
+      - name: Create final ZIP
+        run: |
+          cd submission
+          zip -r ../maska-cheloveka-final.zip .
+
+      - name: Upload final archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: maska-cheloveka-final
+          path: maska-cheloveka-final.zip
+          if-no-files-found: error
