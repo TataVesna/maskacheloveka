@@ -1,15 +1,16 @@
-/* Двухэтапный туториал: сначала останавливаем игру и ждём подтверждения,
-   затем оставляем подсказки поверх игры до прохождения первого препятствия. */
+/* Непрерывающий туториал: подсказка появляется поверх игры,
+   не останавливает героя и остаётся до прохождения первого препятствия. */
 (() => {
   const TRIGGER_X = locationWidth * 0.68;
   const continueHint = tutorialOverlay.querySelector('.tutorial-continue');
 
   let tutorialStarted = false;
-  let tutorialLingering = false;
+  let tutorialVisible = false;
   let firstObstacle = null;
 
-  /* Блокируем старый ранний триггер из game.js. */
+  /* Полностью отключаем старый триггер из game.js, который ставил игру на паузу. */
   tutorialShown = true;
+  tutorialActive = false;
 
   function findFirstObstacle() {
     if (firstObstacle && obstacles.includes(firstObstacle)) return firstObstacle;
@@ -19,77 +20,63 @@
     return firstObstacle;
   }
 
-  function hideTutorialCompletely() {
-    tutorialActive = false;
-    tutorialLingering = false;
-    tutorialOverlay.classList.remove('is-lingering');
-    tutorialOverlay.classList.add('is-hidden');
-    tutorialOverlay.setAttribute('aria-hidden', 'true');
-    tutorialOverlay.style.pointerEvents = '';
-    if (continueHint) continueHint.style.visibility = '';
-  }
-
-  showTutorial = function showTutorialLater() {
-    if (tutorialStarted || tutorialActive) return;
+  function showTutorialWhileRunning() {
+    if (tutorialStarted) return;
 
     tutorialStarted = true;
-    tutorialActive = true;
-    tutorialLingering = false;
-    running = false;
-    jump = null;
-
-    hero.classList.remove('jumping', 'running');
-    hero.classList.add('tutorial-paused');
-    hero.style.transform = '';
-
-    tutorialOverlay.classList.remove('is-hidden', 'is-lingering');
-    tutorialOverlay.style.pointerEvents = 'auto';
-    tutorialOverlay.setAttribute('aria-hidden', 'false');
-    if (continueHint) continueHint.style.visibility = 'visible';
-  };
-
-  closeTutorial = function continueGameWithTutorialVisible() {
-    if (!tutorialActive) return;
-
+    tutorialVisible = true;
     tutorialActive = false;
-    tutorialLingering = true;
+
     tutorialOverlay.classList.remove('is-hidden');
     tutorialOverlay.classList.add('is-lingering');
     tutorialOverlay.style.pointerEvents = 'none';
     tutorialOverlay.setAttribute('aria-hidden', 'false');
-    if (continueHint) continueHint.style.visibility = 'hidden';
 
-    hero.classList.remove('tutorial-paused');
-    hero.classList.add('running');
-    running = true;
-    lastFrameAt = performance.now();
-  };
+    if (continueHint) continueHint.style.display = 'none';
+  }
 
-  /* Не даём resetRun вернуть старый туториал. После обычного поражения
-     обучение повторно не появляется в рамках этой загрузки страницы. */
+  function hideTutorialCompletely() {
+    tutorialVisible = false;
+    tutorialActive = false;
+    tutorialOverlay.classList.remove('is-lingering');
+    tutorialOverlay.classList.add('is-hidden');
+    tutorialOverlay.style.pointerEvents = 'none';
+    tutorialOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  /* Эти функции больше не должны останавливать игру, даже если их вызовет
+     старый обработчик из game.js. */
+  showTutorial = showTutorialWhileRunning;
+  closeTutorial = hideTutorialCompletely;
+
   const originalResetRun = resetRun;
   resetRun = function resetRunWithTutorialState() {
     originalResetRun();
     tutorialShown = true;
-    if (tutorialStarted && !tutorialLingering) {
+    tutorialActive = false;
+
+    if (tutorialStarted && tutorialVisible) {
+      tutorialOverlay.classList.remove('is-hidden');
+      tutorialOverlay.classList.add('is-lingering');
+      tutorialOverlay.style.pointerEvents = 'none';
+      tutorialOverlay.setAttribute('aria-hidden', 'false');
+      if (continueHint) continueHint.style.display = 'none';
+    } else {
       tutorialOverlay.classList.add('is-hidden');
       tutorialOverlay.classList.remove('is-lingering');
     }
   };
 
   function updateTutorialFlow() {
-    if (gameStarted && !tutorialStarted && !tutorialActive) {
+    if (gameStarted && !tutorialStarted) {
       tutorialShown = true;
       const center = worldX + heroScreenX();
       if (running && center >= TRIGGER_X) {
-        const maxScroll = Math.max(0, world.scrollWidth - game.clientWidth);
-        worldX = Math.min(Math.max(0, TRIGGER_X - heroScreenX()), maxScroll);
-        world.style.transform = `translate3d(${-worldX}px, 0, 0)`;
-        showTutorial();
+        showTutorialWhileRunning();
       }
     }
 
-    if (tutorialLingering) {
+    if (tutorialVisible) {
       const obstacle = findFirstObstacle();
       if (obstacle?.crossed) {
         hideTutorialCompletely();
