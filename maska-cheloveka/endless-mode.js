@@ -10,16 +10,16 @@
   const moundScene = (back, front) => ({ type: "mound", back, front });
 
   const moundStart = moundScene(
-    "assets/locations/ПЗ_Курган_начало_2.png",
-    "assets/locations/ПЗ_Курган_начало.png"
+    "assets/locations/ПЗ_Курган_начало_2.png?v=20261016-4",
+    "assets/locations/ПЗ_Курган_начало.png?v=20261016-4"
   );
   const moundCenter = moundScene(
-    "assets/locations/ПЗ_Курган_центр_2.png",
-    "assets/locations/ПЗ_Курган_центр.png"
+    "assets/locations/ПЗ_Курган_центр_2.png?v=20261016-4",
+    "assets/locations/ПЗ_Курган_центр.png?v=20261016-4"
   );
   const moundEnd = moundScene(
-    "assets/locations/ПЗ_Курган_конец2.png",
-    "assets/locations/ПЗ_Курган_конец.png"
+    "assets/locations/ПЗ_Курган_конец2.png?v=20261016-4",
+    "assets/locations/ПЗ_Курган_конец.png?v=20261016-4"
   );
 
   const locationGroups = {
