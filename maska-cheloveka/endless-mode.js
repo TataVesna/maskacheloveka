@@ -109,12 +109,7 @@
 
     if (spec.type === "mound") {
       section.classList.add("location-scene--mound");
-
-      const back = document.createElement("img");
-      back.className = "scene-layer scene-layer--back";
-      back.src = spec.back;
-      back.alt = "";
-      section.appendChild(back);
+      section.style.backgroundImage = `url("${spec.back}")`;
 
       const front = document.createElement("img");
       front.className = "scene-layer scene-layer--front";
