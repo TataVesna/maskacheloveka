@@ -13,6 +13,7 @@
   const WITCH_VERTICAL_LIFT = 11;
   const STUMP_VERTICAL_LIFT = 50;
   const STUMP_SCALE = 2 / 3;
+  const BUSH_SCALE = 0.85;
 
   let previousLocationWidth = innerHeight * LOCATION_ASPECT;
 
@@ -96,7 +97,8 @@
     hero.style.bottom = `calc(var(--run-line-bottom) - ${(12 - HERO_VERTICAL_LIFT) * sceneScale}px)`;
 
     /* Препятствия: фактическая ширина меняется, поэтому offsetWidth и коллизии
-       остаются синхронны с визуальным размером. Пень уменьшен в 1.5 раза. */
+       остаются синхронны с визуальным размером. Пень уменьшен в 1.5 раза,
+       кусты — немного уменьшены. */
     obstacles.forEach((obstacle) => {
       if (obstacle._logicalX != null) {
         obstacle.x = obstacle._logicalX * newLocationWidth;
@@ -104,7 +106,17 @@
         if (obstacle.hint) obstacle.hint.style.left = `${obstacle.x}px`;
       }
 
-      const obstacleScale = obstacle.id === 'stump' ? STUMP_SCALE : 1;
+      const isBush = [
+        'blue-bush',
+        'red-bush',
+        'cave-blue-bush',
+        'cave-red-bush'
+      ].includes(obstacle.id);
+      const obstacleScale = obstacle.id === 'stump'
+        ? STUMP_SCALE
+        : isBush
+          ? BUSH_SCALE
+          : 1;
       setScaledImageWidth(obstacle.element, obstacleScale);
 
       const baseBottom = obstacle.id === 'crowd' ? 40 : 30;
@@ -117,11 +129,11 @@
       obstacle.element.style.setProperty('bottom', `${loweredBottom}px`, 'important');
     });
 
-    /* Цветные кусты опущены на те же 35 px, что и препятствия. */
+    /* Цветные кусты-подсказки, если ещё остались в DOM, масштабируются отдельно. */
     world.querySelectorAll('.form-indicator-bush').forEach((indicator) => {
       const logicalX = Number(indicator.dataset.logicalX);
       if (Number.isFinite(logicalX)) indicator.style.left = `${logicalX * newLocationWidth}px`;
-      setScaledImageWidth(indicator);
+      setScaledImageWidth(indicator, BUSH_SCALE);
       const loweredBushBottom = (30 - BUSH_VERTICAL_OFFSET) * sceneScale;
       indicator.style.setProperty('bottom', `${loweredBushBottom}px`, 'important');
     });
