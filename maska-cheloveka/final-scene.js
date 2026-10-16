@@ -117,7 +117,7 @@
   }
 
   function watchFinalScene() {
-    if (!triggered && gameStarted && !tutorialActive) {
+    if (!triggered && !window.infiniteMode && gameStarted && !tutorialActive) {
       const maxScroll = Math.max(0, world.scrollWidth - game.clientWidth);
       const backgroundAtEnd = maxScroll > 0 && worldX >= maxScroll - 1;
 
