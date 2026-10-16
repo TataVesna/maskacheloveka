@@ -1,23 +1,36 @@
-/* Настоящий бесконечный режим: процедурные сцены и препятствия.
-   Режим включается кнопкой на экране результата через window.infiniteMode = true. */
+/* Настоящий бесконечный режим: процедурные группы локаций и плотный набор препятствий. */
 (() => {
   const LOCATION_ASPECT = 3000 / 1080;
   const METERS_PER_SCENE = 100;
-  const INITIAL_SCENES = 12;
-  const SCENES_AHEAD = 6;
-  const SAFE_START_SCENES = 2;
+  const INITIAL_SCENES = 14;
+  const SCENES_AHEAD = 8;
+  const SAFE_START_SCENES = 1;
 
-  const backgroundPool = [
-    "assets/locations/forest-start.png",
-    "assets/locations/forest-center.png",
-    "assets/locations/forest-end.png",
-    "assets/locations/mound-start.png",
-    "assets/locations/mound-center.png",
-    "assets/locations/mound-end.png",
-    "assets/locations/river.png",
-    "assets/locations/settlement-start.png",
-    "assets/locations/settlement-end.png"
-  ];
+  const locationGroups = {
+    forest: () => {
+      const extraCenters = Math.floor(Math.random() * 3);
+      return [
+        "assets/locations/forest-start.png",
+        "assets/locations/forest-center.png",
+        ...Array(extraCenters).fill("assets/locations/forest-center.png"),
+        "assets/locations/forest-end.png"
+      ];
+    },
+    mound: () => {
+      const extraCenters = Math.floor(Math.random() * 3);
+      return [
+        "assets/locations/mound-start.png",
+        "assets/locations/mound-center.png",
+        ...Array(extraCenters).fill("assets/locations/mound-center.png"),
+        "assets/locations/mound-end.png"
+      ];
+    },
+    settlement: () => [
+      "assets/locations/settlement-start.png",
+      "assets/locations/settlement-end.png"
+    ],
+    river: () => ["assets/locations/river.png"]
+  };
 
   const normalScenes = [...world.querySelectorAll(".location-scene")];
   const normalObstacles = obstacles.slice();
@@ -30,16 +43,24 @@
   });
 
   const groundIds = ["crowd", "bridge", "river"].filter((id) => obstacleTemplates.has(id));
-  const jumpIds = ["ravine", "stump", "blue-bush", "red-bush"].filter((id) => obstacleTemplates.has(id));
+  const jumpIds = [
+    "ravine",
+    "stump",
+    "blue-bush",
+    "red-bush",
+    "cave-blue-bush",
+    "cave-red-bush"
+  ].filter((id) => obstacleTemplates.has(id));
   const allIds = [...groundIds, ...jumpIds];
 
   let endlessActive = false;
   let endlessScenes = [];
   let endlessObstacleNodes = [];
   let generatedSceneCount = 0;
-  let lastBackground = "";
+  let sceneQueue = [];
+  let lastGroupName = null;
   let lastObstacleX = -Infinity;
-  let lastJumpScene = -10;
+  let lastPlacedWasJump = false;
 
   const baseResetRun = resetRun;
   const baseFailRun = failRun;
@@ -52,11 +73,16 @@
     return items[Math.floor(Math.random() * items.length)];
   }
 
-  function chooseBackground() {
-    const choices = backgroundPool.filter((src) => src !== lastBackground);
-    const src = randomItem(choices.length ? choices : backgroundPool);
-    lastBackground = src;
-    return src;
+  function refillSceneQueue() {
+    const names = Object.keys(locationGroups).filter((name) => name !== lastGroupName);
+    const groupName = randomItem(names.length ? names : Object.keys(locationGroups));
+    lastGroupName = groupName;
+    sceneQueue.push(...locationGroups[groupName]());
+  }
+
+  function nextBackground() {
+    if (!sceneQueue.length) refillSceneQueue();
+    return sceneQueue.shift();
   }
 
   function appendScene() {
@@ -65,14 +91,14 @@
     section.setAttribute("aria-hidden", "true");
 
     const img = document.createElement("img");
-    img.src = chooseBackground();
+    img.src = nextBackground();
     img.alt = "";
     section.appendChild(img);
     world.appendChild(section);
 
     endlessScenes.push(section);
     const sceneIndex = generatedSceneCount++;
-    maybeAddObstacle(sceneIndex);
+    addObstaclesForScene(sceneIndex);
   }
 
   function cloneObstacleFromTemplate(id, x) {
@@ -105,28 +131,39 @@
     return obstacle;
   }
 
-  function maybeAddObstacle(sceneIndex) {
-    if (sceneIndex < SAFE_START_SCENES || !allIds.length) return;
-    if (Math.random() > 0.82) return;
+  function chooseObstacleId({ allowJump = true, excludeRiver = false } = {}) {
+    let pool = allowJump ? allIds : groundIds;
+    if (excludeRiver) pool = pool.filter((id) => id !== "river");
+    return pool.length ? randomItem(pool) : null;
+  }
 
+  function placeObstacleAt(sceneIndex, fraction, options = {}) {
     const location = currentLocationWidth();
-    let pool = allIds;
+    const allowJump = !lastPlacedWasJump;
+    const id = chooseObstacleId({ allowJump, ...options });
+    if (!id) return false;
 
-    if (sceneIndex - lastJumpScene < 2 && groundIds.length) {
-      pool = groundIds;
-    }
-
-    const id = randomItem(pool);
-    const isJump = jumpIds.includes(id);
-    const fraction = 0.42 + Math.random() * 0.34;
     const x = sceneIndex * location + fraction * location;
-
-    /* Не ставим препятствия почти вплотную друг к другу. */
-    if (x - lastObstacleX < location * 0.58) return;
+    if (x - lastObstacleX < location * 0.30) return false;
 
     if (cloneObstacleFromTemplate(id, x)) {
       lastObstacleX = x;
-      if (isJump) lastJumpScene = sceneIndex;
+      lastPlacedWasJump = jumpIds.includes(id);
+      return true;
+    }
+
+    return false;
+  }
+
+  function addObstaclesForScene(sceneIndex) {
+    if (sceneIndex < SAFE_START_SCENES || !allIds.length) return;
+
+    /* После первого спокойного экрана на каждом экране есть минимум одно препятствие.
+       Примерно в 60% случаев добавляем второе, но не ставим два прыжка подряд. */
+    placeObstacleAt(sceneIndex, 0.31 + Math.random() * 0.08);
+
+    if (Math.random() < 0.60) {
+      placeObstacleAt(sceneIndex, 0.72 + Math.random() * 0.08, { excludeRiver: true });
     }
   }
 
@@ -179,15 +216,26 @@
     if (witchBubble) witchBubble.style.display = "";
   }
 
+  function hideTutorialForEndless() {
+    tutorialActive = false;
+    tutorialShown = true;
+    tutorialOverlay.classList.add("is-hidden");
+    tutorialOverlay.classList.remove("is-lingering");
+    tutorialOverlay.style.pointerEvents = "none";
+    tutorialOverlay.setAttribute("aria-hidden", "true");
+  }
+
   function buildEndlessRun() {
     clearEndlessContent();
     hideNormalContent();
+    hideTutorialForEndless();
 
     obstacles = [];
     generatedSceneCount = 0;
-    lastBackground = "";
+    sceneQueue = [];
+    lastGroupName = null;
     lastObstacleX = -Infinity;
-    lastJumpScene = -10;
+    lastPlacedWasJump = false;
 
     for (let i = 0; i < INITIAL_SCENES; i++) appendScene();
 
@@ -258,13 +306,10 @@
       const location = currentLocationWidth();
       const currentScene = Math.floor((worldX + innerWidth) / location);
 
-      /* Всегда держим несколько полноценных экранов впереди героя,
-         поэтому gameLoop не успевает дойти до текущего maxScroll. */
       while (generatedSceneCount < currentScene + SCENES_AHEAD) {
         appendScene();
       }
 
-      /* Удаляем уже пройденные препятствия далеко позади героя, чтобы DOM не разрастался. */
       const cleanupBefore = worldX - location * 2;
       obstacles = obstacles.filter((obstacle) => {
         if (obstacle.x >= cleanupBefore || !obstacle.crossed) return true;
