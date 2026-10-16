@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Balkara Condensed";
+  src: url("assets/ofont.ru_Balkara%20Condensed%20(1).ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.tutorial-title,
+.tutorial-controls,
+.tutorial-gesture-label,
+.tutorial-continue,
+#result-distance {
+  font-family: "Balkara Condensed", Georgia, "Times New Roman", serif !important;
+}
