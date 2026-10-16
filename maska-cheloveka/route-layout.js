@@ -34,15 +34,17 @@
   }
 
   /* Первым препятствием остаётся овраг для медведя.
-     Между оврагами/пнями оставляем наземные препятствия, чтобы маршрут был
-     плотным, но не требовал двух прыжков почти подряд. */
+     После ведьмы маршрут намеренно становится чуть свободнее: на телефоне
+     игроку нужен запас времени между свайпом и тапом для смены облика. */
   const desiredIds = [
     "ravine",
     "crowd", "bridge", "stump",
     "river", "crowd", "ravine",
+
+    /* После ведьмы */
     "bridge", "crowd", "stump",
     "river", "crowd", "ravine",
-    "bridge", "crowd", "stump", "river"
+    "bridge", "crowd", "stump"
   ];
 
   const availableById = new Map();
@@ -80,8 +82,8 @@
      6 — река,
      7..8 — городище.
 
-     Наземные препятствия могут стоять плотнее. Овраги и пни размещены так,
-     чтобы между ними оставался запас под окончание прыжка и новую команду. */
+     После чекпоинта у ведьмы первое препятствие — безопасный для стартовой
+     формы мост, а первые активные действия находятся заметно дальше. */
   const slots = [
     { segment: 0, fraction: 0.08 }, // ravine — ближе к началу маршрута
 
@@ -93,18 +95,18 @@
     { segment: 2, fraction: 0.62 }, // crowd
     { segment: 2, fraction: 0.86 }, // ravine
 
-    { segment: 6, fraction: 0.36 }, // bridge
-    { segment: 6, fraction: 0.58 }, // crowd
-    { segment: 6, fraction: 0.84 }, // stump
+    /* После ведьмы: запас для реакции после респауна. */
+    { segment: 6, fraction: 0.42 }, // bridge — человек, без срочного действия
+    { segment: 6, fraction: 0.68 }, // crowd — человек
+    { segment: 6, fraction: 0.90 }, // stump — первый прыжок после чекпоинта
 
-    { segment: 7, fraction: 0.10 }, // river
-    { segment: 7, fraction: 0.58 }, // crowd
-    { segment: 7, fraction: 0.82 }, // ravine
+    { segment: 7, fraction: 0.32 }, // river — успеть смениться на медведя
+    { segment: 7, fraction: 0.68 }, // crowd — вернуться в человека
 
-    { segment: 8, fraction: 0.46 }, // bridge
-    { segment: 8, fraction: 0.62 }, // crowd
-    { segment: 8, fraction: 0.82 }, // stump
-    { segment: 8, fraction: 0.96 }  // river
+    { segment: 8, fraction: 0.20 }, // ravine — большой запас перед прыжком медведя
+    { segment: 8, fraction: 0.56 }, // bridge — человек
+    { segment: 8, fraction: 0.76 }, // crowd — человек
+    { segment: 8, fraction: 0.94 }  // stump — финальный прыжок человеком
   ];
 
   regularObstacles.forEach((obstacle, index) => {
