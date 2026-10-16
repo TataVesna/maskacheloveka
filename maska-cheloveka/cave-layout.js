@@ -11,9 +11,11 @@
 
   const caveCenterSegment = 4;
 
+  /* Новая графика препятствий. Добавляем версию в URL, чтобы GitHub Pages
+     и браузер не отдавали ранее закэшированные PNG с теми же препятствиями. */
   const updatedAssets = {
-    "cave-low-passage": "assets/obstacles/ПЗ_Низкий проход (1).png",
-    "cave-wall": "assets/obstacles/ПЗ_Стена (1).png"
+    "cave-low-passage": "assets/obstacles/%D0%9F%D0%97_%D0%9D%D0%B8%D0%B7%D0%BA%D0%B8%D0%B9%20%D0%BF%D1%80%D0%BE%D1%85%D0%BE%D0%B4%20(1).png?v=20261016-2",
+    "cave-wall": "assets/obstacles/%D0%9F%D0%97_%D0%A1%D1%82%D0%B5%D0%BD%D0%B0%20(1).png?v=20261016-2"
   };
 
   for (const obstacle of obstacles) {
@@ -23,6 +25,7 @@
     const updatedSrc = updatedAssets[obstacle.id];
     if (updatedSrc) {
       obstacle.src = updatedSrc;
+      obstacle.element.removeAttribute("srcset");
       obstacle.element.src = updatedSrc;
     }
 
