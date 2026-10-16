@@ -1,4 +1,5 @@
-/* Экран результата показывается и при проигрыше, и после финальной сцены. */
+/* Экран результата показывается при проигрыше до ведьмы и после финальной сцены.
+   После активированного чекпоинта у ведьмы поражение сразу возвращает игрока к чекпоинту. */
 (() => {
   const overlay = document.createElement("div");
   overlay.id = "result-screen";
@@ -45,8 +46,9 @@
     });
   };
 
-  /* При проигрыше вместо мгновенного рестарта показываем экран результата. */
-  failRun = function failRunWithResultScreen() {
+  /* До ведьмы поражение показывает экран результата.
+     После ведьмы — короткое падение и мгновенный рестарт от чекпоинта. */
+  failRun = function failRunWithCheckpointAwareResult() {
     if (!running || window.finalSequenceActive) return;
 
     running = false;
@@ -58,6 +60,11 @@
     hero.classList.add("falling");
 
     window.setTimeout(() => {
+      if (window.hasWitchCheckpoint?.()) {
+        resetRun();
+        return;
+      }
+
       window.showResultScreen("loss");
     }, 520);
   };
