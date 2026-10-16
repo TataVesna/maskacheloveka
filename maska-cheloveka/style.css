@@ -81,36 +81,38 @@ body {
   user-select: none;
 }
 
-/* Курган: PNG с цифрой 2 — единый базовый фон секции.
-   Обычный PNG остаётся только передним прозрачным слоем над препятствиями. */
+/* ===== СОСТАВНОЙ КУРГАН =====
+   Новые PNG кургана экспортированы отдельными слоями, поэтому их нельзя
+   растягивать по высоте до 1080 как обычные панорамы.
+
+   - файл с цифрой 2 = нижний слой и прижимается к нижнему краю сцены;
+   - обычный файл = верхний слой и прижимается к верхнему краю;
+   - оба слоя масштабируются только по ширине, сохраняя собственные пропорции;
+   - препятствия имеют z-index 3–4 и оказываются между слоями;
+   - герой с z-index 10 остаётся поверх всей сцены. */
 .location-scene--mound {
   overflow: hidden;
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  background-size: 100% 100%;
+  background: #fff;
 }
 
-.location-scene--mound-start {
-  background-image: url("assets/locations/ПЗ_Курган_начало_2.png");
-}
-
-.location-scene--mound-center {
-  background-image: url("assets/locations/ПЗ_Курган_центр_2.png");
-}
-
-.location-scene--mound-end {
-  background-image: url("assets/locations/ПЗ_Курган_конец2.png");
-}
-
-.location-scene--mound .scene-layer--front {
+.location-scene--mound .mound-layer {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  left: 0;
+  width: 100% !important;
+  height: auto !important;
   max-width: none;
-  z-index: 8;
   pointer-events: none;
   user-select: none;
+}
+
+.location-scene--mound .mound-layer--back {
+  bottom: 0;
+  z-index: 1;
+}
+
+.location-scene--mound .mound-layer--front {
+  top: 0;
+  z-index: 8;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
