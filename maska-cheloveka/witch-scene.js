@@ -36,18 +36,29 @@
   const currentLocationWidth = () => innerHeight * (3000 / 1080);
   const currentWitchX = () => currentLocationWidth() * witchRoutePosition;
   const sceneScale = () => innerHeight / 1080;
+  const isTouchLayout = () => window.matchMedia("(pointer: coarse)").matches || innerWidth <= 900;
 
   function positionWitchAndBubble() {
     const scale = sceneScale();
     const witchX = currentWitchX();
+    const mobile = isTouchLayout();
 
     witch.style.left = `${witchX}px`;
     witch.dataset.logicalX = String(witchRoutePosition);
 
-    /* Бабл — справа и немного выше ведьмы. */
-    bubble.style.left = `${witchX + 175 * scale}px`;
-    bubble.style.bottom = `calc(var(--run-line-bottom) + ${95 * scale}px)`;
-    bubble.style.width = `${300 * scale}px`;
+    /* На телефоне бабл масштабируется от ширины экрана, а не только от высоты сцены:
+       в landscape высота маленькая, поэтому прежняя формула делала реплику слишком мелкой. */
+    if (mobile) {
+      const bubbleWidth = Math.min(innerWidth * 0.50, 430);
+      bubble.style.left = `${witchX + Math.min(innerWidth * 0.16, 155)}px`;
+      bubble.style.bottom = `calc(var(--run-line-bottom) + ${Math.max(72, innerHeight * 0.18)}px)`;
+      bubble.style.width = `${bubbleWidth}px`;
+    } else {
+      bubble.style.left = `${witchX + 175 * scale}px`;
+      bubble.style.bottom = `calc(var(--run-line-bottom) + ${95 * scale}px)`;
+      bubble.style.width = `${300 * scale}px`;
+    }
+
     bubble.style.transform = `translate(-50%, ${18 * scale}px) scale(0.96)`;
   }
 
