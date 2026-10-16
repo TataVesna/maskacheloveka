@@ -81,28 +81,36 @@ body {
   user-select: none;
 }
 
-/* Курган собирается из двух PNG-слоёв.
-   Нижний слой лежит под препятствиями, верхний перекрывает верхушки колонн. */
+/* Курган: PNG с цифрой 2 — единый базовый фон секции.
+   Обычный PNG остаётся только передним прозрачным слоем над препятствиями. */
 .location-scene--mound {
-  overflow: visible;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100% 100%;
 }
 
-.location-scene--mound .scene-layer {
+.location-scene--mound-start {
+  background-image: url("assets/locations/ПЗ_Курган_начало_2.png");
+}
+
+.location-scene--mound-center {
+  background-image: url("assets/locations/ПЗ_Курган_центр_2.png");
+}
+
+.location-scene--mound-end {
+  background-image: url("assets/locations/ПЗ_Курган_конец2.png");
+}
+
+.location-scene--mound .scene-layer--front {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   max-width: none;
+  z-index: 8;
   pointer-events: none;
   user-select: none;
-}
-
-.location-scene--mound .scene-layer--back {
-  z-index: 1;
-}
-
-.location-scene--mound .scene-layer--front {
-  z-index: 8;
 }
 
 /* ===== СТАРТОВЫЙ ЭКРАН ===== */
