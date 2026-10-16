@@ -2,7 +2,7 @@
    После активированного чекпоинта у ведьмы поражение сразу возвращает игрока к чекпоинту. */
 (() => {
   const STORY_URL = "https://stroki.mts.ru/collection/pesni-zemli-2856";
-  const ROUTE_METERS = 1000;
+  const ROUTE_METERS = 300;
 
   const overlay = document.createElement("div");
   overlay.id = "result-screen";
