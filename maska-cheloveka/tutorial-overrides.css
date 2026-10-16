@@ -1,6 +1,10 @@
-/* Туториал без затемняющей/текстовой подложки. */
+/* Туториал фиксирован на экране и не мешает управлению. */
 #tutorial-overlay {
+  position: fixed !important;
+  inset: 0 !important;
   background: transparent !important;
+  pointer-events: none !important;
+  cursor: default !important;
 }
 
 .tutorial-card {
@@ -16,8 +20,7 @@
 
 .tutorial-title,
 .tutorial-controls,
-.tutorial-gesture-label,
-.tutorial-continue {
+.tutorial-gesture-label {
   color: #000 !important;
 }
 
@@ -27,6 +30,10 @@
 
 .tutorial-gesture-label {
   font-size: clamp(18px, 1.8vw, 27px) !important;
+}
+
+.tutorial-continue {
+  display: none !important;
 }
 
 .tutorial-gesture-icon-wrap {
@@ -55,11 +62,6 @@
 
 #tutorial-overlay.is-lingering {
   pointer-events: none !important;
-  cursor: default !important;
-}
-
-#tutorial-overlay.is-lingering .tutorial-continue {
-  visibility: hidden !important;
 }
 
 @media (pointer: coarse) {
