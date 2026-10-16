@@ -151,6 +151,72 @@ body {
   display: none;
 }
 
+.tutorial-gesture-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 140px;
+}
+
+.tutorial-gesture-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 138px;
+}
+
+.tutorial-gesture-icon {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 72px;
+  max-height: 72px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tutorial-gesture-label {
+  text-align: center;
+  font: 400 clamp(14px, 1.35vw, 20px)/1.35 Arial, sans-serif;
+}
+
+.tutorial-gesture-icon--jump {
+  animation: tutorialSwipeJump 1.4s ease-in-out infinite;
+}
+
+.tutorial-gesture-icon--tap {
+  animation: tutorialTapPulse 1s ease-in-out infinite;
+}
+
+@keyframes tutorialSwipeJump {
+  0% {
+    transform: translateY(25px);
+  }
+  40% {
+    transform: translateY(-25px);
+  }
+  60% {
+    transform: translateY(-25px);
+  }
+  100% {
+    transform: translateY(25px);
+  }
+}
+
+@keyframes tutorialTapPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.82);
+  }
+  65% {
+    transform: scale(1.08);
+  }
+}
+
 .tutorial-continue {
   margin-top: 16px;
   font: 400 clamp(11px, 1vw, 14px)/1.3 Arial, sans-serif;
@@ -166,6 +232,9 @@ body {
 
   .tutorial-controls--touch {
     display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    justify-content: center;
   }
 }
 
