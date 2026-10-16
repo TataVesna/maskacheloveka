@@ -6,30 +6,46 @@
   const SCENES_AHEAD = 8;
   const SAFE_START_SCENES = 1;
 
+  const singleScene = (src) => ({ type: "single", src });
+  const moundScene = (back, front) => ({ type: "mound", back, front });
+
+  const moundStart = moundScene(
+    "assets/locations/ПЗ_Курган_начало_2.png",
+    "assets/locations/ПЗ_Курган_начало.png"
+  );
+  const moundCenter = moundScene(
+    "assets/locations/ПЗ_Курган_центр_2.png",
+    "assets/locations/ПЗ_Курган_центр.png"
+  );
+  const moundEnd = moundScene(
+    "assets/locations/ПЗ_Курган_конец2.png",
+    "assets/locations/ПЗ_Курган_конец.png"
+  );
+
   const locationGroups = {
     forest: () => {
       const extraCenters = Math.floor(Math.random() * 3);
       return [
-        "assets/locations/forest-start.png",
-        "assets/locations/forest-center.png",
-        ...Array(extraCenters).fill("assets/locations/forest-center.png"),
-        "assets/locations/forest-end.png"
+        singleScene("assets/locations/forest-start.png"),
+        singleScene("assets/locations/forest-center.png"),
+        ...Array.from({ length: extraCenters }, () => singleScene("assets/locations/forest-center.png")),
+        singleScene("assets/locations/forest-end.png")
       ];
     },
     mound: () => {
       const extraCenters = Math.floor(Math.random() * 3);
       return [
-        "assets/locations/mound-start.png",
-        "assets/locations/mound-center.png",
-        ...Array(extraCenters).fill("assets/locations/mound-center.png"),
-        "assets/locations/mound-end.png"
+        moundStart,
+        moundCenter,
+        ...Array.from({ length: extraCenters }, () => ({ ...moundCenter })),
+        moundEnd
       ];
     },
     settlement: () => [
-      "assets/locations/settlement-start.png",
-      "assets/locations/settlement-end.png"
+      singleScene("assets/locations/settlement-start.png"),
+      singleScene("assets/locations/settlement-end.png")
     ],
-    river: () => ["assets/locations/river.png"]
+    river: () => [singleScene("assets/locations/river.png")]
   };
 
   const normalScenes = [...world.querySelectorAll(".location-scene")];
@@ -80,20 +96,38 @@
     sceneQueue.push(...locationGroups[groupName]());
   }
 
-  function nextBackground() {
+  function nextSceneSpec() {
     if (!sceneQueue.length) refillSceneQueue();
     return sceneQueue.shift();
   }
 
   function appendScene() {
+    const spec = nextSceneSpec();
     const section = document.createElement("section");
     section.className = "location-scene endless-location-scene";
     section.setAttribute("aria-hidden", "true");
 
-    const img = document.createElement("img");
-    img.src = nextBackground();
-    img.alt = "";
-    section.appendChild(img);
+    if (spec.type === "mound") {
+      section.classList.add("location-scene--mound");
+
+      const back = document.createElement("img");
+      back.className = "scene-layer scene-layer--back";
+      back.src = spec.back;
+      back.alt = "";
+      section.appendChild(back);
+
+      const front = document.createElement("img");
+      front.className = "scene-layer scene-layer--front";
+      front.src = spec.front;
+      front.alt = "";
+      section.appendChild(front);
+    } else {
+      const img = document.createElement("img");
+      img.src = spec.src;
+      img.alt = "";
+      section.appendChild(img);
+    }
+
     world.appendChild(section);
 
     endlessScenes.push(section);
