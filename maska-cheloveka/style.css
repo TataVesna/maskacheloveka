@@ -32,7 +32,7 @@ body {
   background: #000000;
 }
 
-/* При проигрыше экран быстро затемняется. Класс falling уже ставится game.js. */
+/* При проигрыше экран затемняется почти сразу. Класс falling уже ставится game.js. */
 #game::after {
   content: "";
   position: fixed;
@@ -42,7 +42,7 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.18s ease, visibility 0.18s ease;
+  transition: opacity 0.10s ease, visibility 0.10s ease;
 }
 
 #game:has(#hero.falling)::after {
@@ -113,23 +113,6 @@ body {
   z-index: 8;
   pointer-events: none;
   user-select: none;
-}
-
-/* Низкий проход должен начинаться внутри пещеры, а не поверх поверхности кургана.
-   Верхняя часть PNG визуально прячется по контуру грунта; foreground-слой кургана
-   остаётся поверх препятствия и дорисовывает край пещеры. */
-.obstacle--cave-low-passage {
-  clip-path: polygon(
-    0 32%,
-    18% 33%,
-    36% 35.5%,
-    50% 36.5%,
-    64% 36%,
-    82% 33.5%,
-    100% 32%,
-    100% 100%,
-    0 100%
-  );
 }
 
 /* Перед курганом идут: берлога + три лесных секции = 4 ширины локации. */
@@ -376,6 +359,13 @@ body {
   width: auto !important;
   max-width: none;
   height: auto;
+}
+
+/* Низкий проход/колонна должен уходить под верхний слой кургана.
+   Обрезаем только его верхнюю часть примерно по линии грунта — визуально
+   колонна начинается уже внутри пещеры и не торчит поверх поверхности. */
+.obstacle--cave-low-passage {
+  clip-path: inset(21% 0 0 0);
 }
 
 /* Текстовые подсказки над препятствиями отключены. */
