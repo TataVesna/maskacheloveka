@@ -109,10 +109,18 @@
 
     if (spec.type === "mound") {
       section.classList.add("location-scene--mound");
-      section.style.backgroundImage = `url("${spec.back}")`;
+
+      /* Курган собирается из двух PNG разной высоты.
+         Нижний слой сохраняет пропорции и прижимается к низу,
+         верхний — сохраняет пропорции и лежит над препятствиями. */
+      const back = document.createElement("img");
+      back.className = "mound-layer mound-layer--back";
+      back.src = spec.back;
+      back.alt = "";
+      section.appendChild(back);
 
       const front = document.createElement("img");
-      front.className = "scene-layer scene-layer--front";
+      front.className = "mound-layer mound-layer--front";
       front.src = spec.front;
       front.alt = "";
       section.appendChild(front);
