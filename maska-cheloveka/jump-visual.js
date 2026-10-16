@@ -27,7 +27,7 @@ startJump = function () {
     takeoffAt: performance.now() + jumpPreparationMs,
     form,
     duration: (isBear ? 1.12 : 0.66) / Number(speedSlider.value),
-    height: innerHeight * (isBear ? 0.24 : 0.18)
+    height: innerHeight * (isBear ? 0.24 : 0.21)
   };
 
   hero.classList.remove("running");
