@@ -71,14 +71,27 @@
   pointer-events: none !important;
 }
 
+/* Временно меняем туториалы местами для проверки мобильного варианта на компьютере. */
+.tutorial-controls--desktop {
+  display: none !important;
+}
+
+.tutorial-controls--touch {
+  display: flex !important;
+}
+
 @media (pointer: coarse) {
   .tutorial-card {
     width: min(900px, 98vw) !important;
     transform: translate(32px, 28px);
   }
 
+  .tutorial-controls--desktop {
+    display: flex !important;
+  }
+
   .tutorial-controls--touch {
-    gap: clamp(34px, 9vw, 86px) !important;
+    display: none !important;
   }
 
   .tutorial-gesture-card {
