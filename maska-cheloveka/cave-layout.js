@@ -1,6 +1,31 @@
 /* Пещерные препятствия находятся только на центральном экране пещеры (mound-center).
    Каменная стена и высокий проход образуют одну композицию и всегда стоят вместе. */
 (() => {
+  /* ===== ИСПРАВЛЕНИЕ КУРГАНА =====
+     Частичные PNG с цифрой 2 визуально не совпадали с верхними слоями при сборке в браузере.
+     Поэтому для базового изображения снова используем цельные панорамы mound-*.png,
+     а новые ПЗ_Курган_*.png оставляем только верхними foreground-слоями над препятствиями.
+     Так сохраняются и нормальная геометрия кургана, и перекрытие верхушек колонн. */
+  const moundSections = [...world.querySelectorAll(".location-scene--mound")];
+  const moundBaseAssets = [
+    "assets/locations/mound-start.png",
+    "assets/locations/mound-center.png",
+    "assets/locations/mound-end.png"
+  ];
+
+  moundSections.forEach((section, index) => {
+    const src = moundBaseAssets[index];
+    if (!src) return;
+
+    section.replaceChildren();
+
+    const base = document.createElement("img");
+    base.className = "mound-base-panorama";
+    base.src = src;
+    base.alt = "";
+    section.appendChild(base);
+  });
+
   const sharedWallFraction = 0.68;
 
   const caveFractions = {
