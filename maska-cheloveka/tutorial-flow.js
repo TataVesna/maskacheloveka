@@ -1,5 +1,6 @@
 /* Непрерывающий туториал: подсказка появляется через секунду после старта,
-   не останавливает героя и остаётся до прохождения первого препятствия. */
+   не останавливает героя и остаётся до прохождения первого препятствия.
+   В бесконечном режиме туториал полностью отключён. */
 (() => {
   const TUTORIAL_DELAY_MS = 1000;
   const continueHint = tutorialOverlay.querySelector('.tutorial-continue');
@@ -9,7 +10,6 @@
   let firstObstacle = null;
   let runStartedAt = null;
 
-  /* Полностью отключаем старый триггер из game.js, который ставил игру на паузу. */
   tutorialShown = true;
   tutorialActive = false;
 
@@ -22,7 +22,7 @@
   }
 
   function showTutorialWhileRunning() {
-    if (tutorialStarted) return;
+    if (tutorialStarted || window.infiniteMode) return;
 
     tutorialStarted = true;
     tutorialVisible = true;
@@ -52,15 +52,18 @@
     runStartedAt = performance.now();
     tutorialShown = true;
     tutorialActive = false;
-    tutorialOverlay.classList.add('is-hidden');
-    tutorialOverlay.classList.remove('is-lingering');
-    tutorialOverlay.style.pointerEvents = 'none';
-    tutorialOverlay.setAttribute('aria-hidden', 'true');
+    hideTutorialCompletely();
     if (continueHint) continueHint.style.display = 'none';
   }
 
-  /* Эти функции больше не должны останавливать игру, даже если их вызовет
-     старый обработчик из game.js. */
+  function disableTutorialForEndless() {
+    tutorialStarted = true;
+    firstObstacle = null;
+    runStartedAt = null;
+    tutorialShown = true;
+    hideTutorialCompletely();
+  }
+
   showTutorial = showTutorialWhileRunning;
   closeTutorial = hideTutorialCompletely;
 
@@ -68,8 +71,11 @@
   resetRun = function resetRunWithTutorialState() {
     originalResetRun();
 
-    /* Полное прохождение начинается от начала маршрута: туториал запускается
-       заново через секунду. При респавне от ведьмы подсказку не показываем. */
+    if (window.infiniteMode) {
+      disableTutorialForEndless();
+      return;
+    }
+
     const isFullRunFromStart = worldX < locationWidth * 0.08;
     if (isFullRunFromStart) {
       prepareTutorialForNewRun();
@@ -78,15 +84,17 @@
 
     runStartedAt = null;
     tutorialShown = true;
-    tutorialActive = false;
-    tutorialVisible = false;
-    tutorialOverlay.classList.add('is-hidden');
-    tutorialOverlay.classList.remove('is-lingering');
-    tutorialOverlay.style.pointerEvents = 'none';
-    tutorialOverlay.setAttribute('aria-hidden', 'true');
+    tutorialStarted = true;
+    hideTutorialCompletely();
   };
 
   function updateTutorialFlow(now) {
+    if (window.infiniteMode) {
+      if (tutorialVisible || !tutorialStarted) disableTutorialForEndless();
+      requestAnimationFrame(updateTutorialFlow);
+      return;
+    }
+
     if (gameStarted && !tutorialStarted) {
       tutorialShown = true;
       if (runStartedAt === null) runStartedAt = now;
@@ -98,9 +106,7 @@
 
     if (tutorialVisible) {
       const obstacle = findFirstObstacle();
-      if (obstacle?.crossed) {
-        hideTutorialCompletely();
-      }
+      if (obstacle?.crossed) hideTutorialCompletely();
     }
 
     requestAnimationFrame(updateTutorialFlow);
