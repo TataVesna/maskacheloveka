@@ -215,15 +215,8 @@
 
   resetRun = function resetRunWithEndlessMode() {
     if (window.infiniteMode) {
-      if (!endlessActive) {
-        baseResetRun();
-        buildEndlessRun();
-      } else {
-        /* Сначала сбрасываем текущее состояние бесконечных препятствий,
-           затем генерируем новый процедурный забег. */
-        baseResetRun();
-        buildEndlessRun();
-      }
+      baseResetRun();
+      buildEndlessRun();
       return;
     }
 
@@ -264,13 +257,9 @@
     if (window.infiniteMode && endlessActive) {
       const location = currentLocationWidth();
       const currentScene = Math.floor((worldX + innerWidth) / location);
-      const scenesAhead = generatedSceneCount - currentScene;
 
-      while (scenesAhead + (generatedSceneCount - (currentScene + scenesAhead)) < SCENES_AHEAD) {
-        appendScene();
-      }
-
-      /* Более прямой запас: всегда держим несколько экранов впереди. */
+      /* Всегда держим несколько полноценных экранов впереди героя,
+         поэтому gameLoop не успевает дойти до текущего maxScroll. */
       while (generatedSceneCount < currentScene + SCENES_AHEAD) {
         appendScene();
       }
