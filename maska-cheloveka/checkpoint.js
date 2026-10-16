@@ -14,6 +14,10 @@
     checkpointActive = checkpointRoutePosition > 0;
   };
 
+  window.hasWitchCheckpoint = function hasWitchCheckpoint() {
+    return checkpointActive;
+  };
+
   const resetRunFromStart = resetRun;
 
   resetRun = function resetRunFromCheckpoint() {
