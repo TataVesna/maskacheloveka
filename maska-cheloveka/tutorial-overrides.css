@@ -1,7 +1,11 @@
-/* Туториал фиксирован на экране и не мешает управлению. */
+/* Туториал фиксирован по центру экрана и не мешает управлению. */
 #tutorial-overlay {
   position: fixed !important;
   inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
   background: transparent !important;
   pointer-events: none !important;
   cursor: default !important;
@@ -16,7 +20,7 @@
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   text-shadow: none !important;
-  transform: translate(55px, 35px);
+  transform: none !important;
 }
 
 .tutorial-title,
@@ -71,27 +75,29 @@
   pointer-events: none !important;
 }
 
-/* Временно меняем туториалы местами для проверки мобильного варианта на компьютере. */
+/* На компьютере показываем управление мышью. */
 .tutorial-controls--desktop {
-  display: none !important;
+  display: flex !important;
 }
 
 .tutorial-controls--touch {
-  display: flex !important;
+  display: none !important;
 }
 
 @media (pointer: coarse) {
   .tutorial-card {
     width: min(900px, 98vw) !important;
-    transform: translate(32px, 28px);
+    transform: none !important;
   }
 
+  /* На телефоне показываем управление тапом и свайпом. */
   .tutorial-controls--desktop {
-    display: flex !important;
+    display: none !important;
   }
 
   .tutorial-controls--touch {
-    display: none !important;
+    display: flex !important;
+    gap: clamp(34px, 9vw, 86px) !important;
   }
 
   .tutorial-gesture-card {
