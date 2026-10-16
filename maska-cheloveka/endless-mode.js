@@ -347,7 +347,7 @@
 
     window.setTimeout(() => {
       window.showResultScreen?.("endless-loss");
-    }, 520);
+    }, 240);
   };
 
   window.getEndlessDistanceMeters = function getEndlessDistanceMeters() {
