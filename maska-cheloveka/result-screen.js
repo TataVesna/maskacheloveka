@@ -50,15 +50,15 @@
   distance.id = "result-distance";
   Object.assign(distance.style, {
     position: "absolute",
-    left: "4.7%",
+    left: "8.5%",
     top: "72.5%",
-    width: "31%",
+    width: "28%",
     color: "#fff",
     fontFamily: '"Balkara Condensed", Georgia, "Times New Roman", serif',
     fontSize: "clamp(62px, 8.6vw, 158px)",
     lineHeight: "0.9",
     whiteSpace: "nowrap",
-    textAlign: "left",
+    textAlign: "center",
     letterSpacing: "0.015em",
     textShadow: "0 2px 2px rgba(0,0,0,0.28)",
     pointerEvents: "none"
