@@ -45,7 +45,7 @@
     witch.dataset.logicalX = String(witchRoutePosition);
 
     /* Бабл — справа и немного выше ведьмы. */
-    bubble.style.left = `${witchX + 195 * scale}px`;
+    bubble.style.left = `${witchX + 175 * scale}px`;
     bubble.style.bottom = `calc(var(--run-line-bottom) + ${95 * scale}px)`;
     bubble.style.width = `${300 * scale}px`;
     bubble.style.transform = `translate(-50%, ${18 * scale}px) scale(0.96)`;
