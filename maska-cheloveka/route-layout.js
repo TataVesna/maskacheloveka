@@ -83,7 +83,7 @@
      Наземные препятствия могут стоять плотнее. Овраги и пни размещены так,
      чтобы между ними оставался запас под окончание прыжка и новую команду. */
   const slots = [
-    { segment: 0, fraction: 0.14 }, // ravine
+    { segment: 0, fraction: 0.08 }, // ravine — ближе к началу маршрута
 
     { segment: 1, fraction: 0.08 }, // crowd
     { segment: 1, fraction: 0.56 }, // bridge
@@ -109,8 +109,7 @@
 
   regularObstacles.forEach((obstacle, index) => {
     const slot = slots[index];
-    const firstObstacleOffset = index === 0 ? 100 : 0;
-    const x = locationWidth * (1 + slot.segment + slot.fraction) + firstObstacleOffset;
+    const x = locationWidth * (1 + slot.segment + slot.fraction);
 
     obstacle.x = x;
     obstacle._logicalX = x / locationWidth;
