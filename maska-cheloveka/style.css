@@ -159,12 +159,21 @@ body {
   min-width: 140px;
 }
 
+.tutorial-gesture-card--desktop {
+  min-width: 180px;
+}
+
 .tutorial-gesture-icon-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 88px;
   height: 138px;
+}
+
+.tutorial-gesture-icon-wrap--desktop {
+  width: 150px;
+  height: 118px;
 }
 
 .tutorial-gesture-icon {
@@ -175,6 +184,17 @@ body {
   max-height: 72px;
   pointer-events: none;
   user-select: none;
+}
+
+.tutorial-gesture-icon--desktop {
+  max-width: 132px;
+  max-height: 96px;
+  transform-origin: 50% 50%;
+  animation: tutorialDesktopPulse 1.15s ease-in-out infinite;
+}
+
+.tutorial-gesture-card--desktop:nth-child(2) .tutorial-gesture-icon--desktop {
+  animation-delay: 0.12s;
 }
 
 .tutorial-gesture-label {
@@ -213,6 +233,18 @@ body {
     transform: scale(0.82);
   }
   65% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes tutorialDesktopPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(0.88);
+  }
+  70% {
     transform: scale(1.08);
   }
 }
