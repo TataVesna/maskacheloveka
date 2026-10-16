@@ -39,7 +39,9 @@ Object.values(spriteFrames).forEach((actions) => {
 const css = getComputedStyle(document.documentElement);
 const locationWidth = parseFloat(css.getPropertyValue("--location-width")) * innerHeight / 100;
 const heroScreenX = () => hero.offsetLeft + hero.offsetWidth / 2;
-const tutorialTriggerX = locationWidth + innerWidth * 0.04;
+/* Туториал появляется почти сразу после старта: герой успевает сделать
+   только короткий пробег, чтобы игрок сначала увидел движение игры. */
+const tutorialTriggerX = heroScreenX() + innerWidth * 0.12;
 
 const obstacleTypes = [
   {
