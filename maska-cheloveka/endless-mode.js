@@ -67,8 +67,6 @@
     if (!obstacleTemplates.has(obstacle.id)) obstacleTemplates.set(obstacle.id, obstacle);
   });
 
-  /* Обычные препятствия разрешены в лесу, на реке, в городище и в кургане.
-     Пещерные препятствия разрешены только на центральных сценах кургана. */
   const regularIds = [
     "crowd",
     "bridge",
@@ -101,6 +99,8 @@
   let lastGroupName = null;
   let lastObstacleX = -Infinity;
   let lastPlacedWasJump = false;
+  let lastPlacedId = null;
+  let caveCenterIndex = 0;
 
   const baseResetRun = resetRun;
   const baseFailRun = failRun;
@@ -152,7 +152,6 @@
 
     world.appendChild(section);
 
-    /* В кургане препятствия находятся между нижним и верхним слоями. */
     if (spec.type === "mound") {
       const front = document.createElement("img");
       front.className = "mound-front-overlay endless-mound-front-overlay";
@@ -199,30 +198,24 @@
   }
 
   function obstaclePoolForScene(spec) {
-    /* На реке и в городище разрешены любые обычные препятствия, кроме пещерных.
-       В лесу — те же обычные препятствия. */
     if (spec.group === "river" || spec.group === "settlement" || spec.group === "forest") {
       return regularIds;
     }
 
     if (spec.group === "mound") {
-      if (spec.part === "center") {
-        return [...regularIds, ...caveIds];
-      }
-
-      /* Перед входом в пещеру не ставим красный куст. */
-      if (spec.part === "start") {
-        return regularIds.filter((id) => id !== "red-bush");
-      }
-
+      if (spec.part === "center") return [...regularIds, ...caveIds];
+      if (spec.part === "start") return regularIds.filter((id) => id !== "red-bush");
       return regularIds;
     }
 
     return regularIds;
   }
 
-  function chooseObstacleId(spec, { excludeRiver = false } = {}) {
-    let pool = obstaclePoolForScene(spec);
+  function chooseObstacleId(spec, { excludeRiver = false, regularOnly = false } = {}) {
+    let pool = regularOnly ? regularIds : obstaclePoolForScene(spec);
+
+    /* Не повторяем один и тот же объект подряд: две толпы, два моста и т.п. */
+    if (lastPlacedId) pool = pool.filter((id) => id !== lastPlacedId);
 
     if (lastPlacedWasJump) {
       pool = pool.filter((id) => !jumpIds.includes(id));
@@ -232,7 +225,17 @@
       pool = pool.filter((id) => id !== "river");
     }
 
+    if (spec.group === "mound" && spec.part === "start") {
+      pool = pool.filter((id) => id !== "red-bush");
+    }
+
     return pool.length ? randomItem(pool) : null;
+  }
+
+  function rememberPlaced(id, x) {
+    lastObstacleX = x;
+    lastPlacedWasJump = jumpIds.includes(id);
+    lastPlacedId = id;
   }
 
   function placeObstacleAt(sceneIndex, spec, fraction, options = {}) {
@@ -244,22 +247,68 @@
     if (x - lastObstacleX < location * MIN_OBSTACLE_GAP) return false;
 
     if (cloneObstacleFromTemplate(id, x)) {
-      lastObstacleX = x;
-      lastPlacedWasJump = jumpIds.includes(id);
+      rememberPlaced(id, x);
       return true;
     }
 
     return false;
   }
 
+  function placeSpecificObstacle(sceneIndex, id, fraction) {
+    if (!obstacleTemplates.has(id)) return false;
+    const location = currentLocationWidth();
+    const x = sceneIndex * location + fraction * location;
+    if (x - lastObstacleX < location * MIN_OBSTACLE_GAP) return false;
+
+    if (cloneObstacleFromTemplate(id, x)) {
+      rememberPlaced(id, x);
+      return true;
+    }
+
+    return false;
+  }
+
+  function placeCaveWallPair(sceneIndex, fraction) {
+    if (!obstacleTemplates.has("cave-wall") || !obstacleTemplates.has("cave-high-passage")) return false;
+
+    const location = currentLocationWidth();
+    const x = sceneIndex * location + fraction * location;
+    if (x - lastObstacleX < location * MIN_OBSTACLE_GAP) return false;
+
+    const high = cloneObstacleFromTemplate("cave-high-passage", x);
+    const wall = cloneObstacleFromTemplate("cave-wall", x);
+    if (!high || !wall) return false;
+
+    lastObstacleX = x;
+    lastPlacedWasJump = false;
+    lastPlacedId = "cave-wall-pair";
+    return true;
+  }
+
   function addObstaclesForScene(sceneIndex, spec) {
     if (sceneIndex < SAFE_START_SCENES || !regularIds.length) return;
 
-    /* Первый объект — примерно в первой трети сцены. */
+    /* Каждая центральная часть кургана обязательно содержит пещерное препятствие.
+       Они чередуются: низкий проход, затем композиция стена + высокий проход. */
+    if (spec.group === "mound" && spec.part === "center") {
+      const useLowPassage = caveCenterIndex % 2 === 0;
+      caveCenterIndex += 1;
+
+      if (useLowPassage && obstacleTemplates.has("cave-low-passage")) {
+        placeSpecificObstacle(sceneIndex, "cave-low-passage", 0.34);
+        if (Math.random() < 0.55) {
+          placeObstacleAt(sceneIndex, spec, 0.76, { excludeRiver: true, regularOnly: true });
+        }
+      } else if (obstacleTemplates.has("cave-wall") && obstacleTemplates.has("cave-high-passage")) {
+        placeCaveWallPair(sceneIndex, 0.55);
+      } else {
+        placeObstacleAt(sceneIndex, spec, 0.36);
+      }
+      return;
+    }
+
     placeObstacleAt(sceneIndex, spec, 0.31 + Math.random() * 0.08);
 
-    /* Второй объект встречается часто, но не всегда. Между препятствиями
-       остаётся запас для тапа/свайпа на телефоне. */
     if (Math.random() < 0.60) {
       placeObstacleAt(sceneIndex, spec, 0.72 + Math.random() * 0.08, { excludeRiver: true });
     }
@@ -346,6 +395,8 @@
     lastGroupName = null;
     lastObstacleX = -Infinity;
     lastPlacedWasJump = false;
+    lastPlacedId = null;
+    caveCenterIndex = 0;
 
     for (let i = 0; i < INITIAL_SCENES; i++) appendScene();
 
