@@ -109,7 +109,8 @@
 
   regularObstacles.forEach((obstacle, index) => {
     const slot = slots[index];
-    const x = locationWidth * (1 + slot.segment + slot.fraction);
+    const firstObstacleOffset = index === 0 ? 100 : 0;
+    const x = locationWidth * (1 + slot.segment + slot.fraction) + firstObstacleOffset;
 
     obstacle.x = x;
     obstacle._logicalX = x / locationWidth;
