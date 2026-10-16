@@ -72,7 +72,7 @@
   }
 
   function triggerWitchScene() {
-    if (triggered || completed) return;
+    if (triggered || completed || window.infiniteMode) return;
     triggered = true;
 
     running = false;
@@ -102,7 +102,7 @@
   }
 
   function continueAfterWitch(event) {
-    if (!waitingForInteraction || completed) return;
+    if (!waitingForInteraction || completed || window.infiniteMode) return;
     event?.preventDefault?.();
     event?.stopPropagation?.();
 
@@ -126,7 +126,7 @@
   game.addEventListener("pointerdown", continueAfterWitch);
 
   function watchWitch() {
-    if (!triggered && !completed && gameStarted && running && !tutorialActive) {
+    if (!window.infiniteMode && !triggered && !completed && gameStarted && running && !tutorialActive) {
       const center = worldX + heroScreenX();
       const approachDistance = innerWidth * 0.08;
       if (center >= currentWitchX() - approachDistance) triggerWitchScene();
